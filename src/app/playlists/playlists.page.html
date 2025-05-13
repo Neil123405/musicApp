@@ -1,0 +1,24 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Playlists</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list *ngFor="let name of playlistNames">
+    <ion-item-divider color="light">
+      <ion-label><strong>{{ name }}</strong></ion-label>
+    </ion-item-divider>
+    
+    <ion-item *ngFor="let track of playlists[name]" (click)="playTrack(track)">
+  <ion-thumbnail slot="start">
+    <img [src]="track.album_image || 'assets/placeholder.png'" />
+  </ion-thumbnail>
+  <ion-label>
+    <h2>{{ track.name }}</h2>
+    <p>{{ track.artist_name }}</p>
+  </ion-label>
+</ion-item>
+
+  </ion-list>
+</ion-content>

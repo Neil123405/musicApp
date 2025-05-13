@@ -1,0 +1,15 @@
+<ion-header><ion-toolbar><ion-title>Now Playing</ion-title></ion-toolbar></ion-header>
+<ion-content *ngIf="musicService.currentTrack">
+  <div class="track-info">
+    <img [src]="musicService.currentTrack.album_image || 'assets/placeholder.png'" />
+    <h2>{{ musicService.currentTrack.name }}</h2>
+    <p>{{ musicService.currentTrack.artist_name }}</p>
+    <ion-button expand="full" (click)="togglePlayback()">
+      {{ musicService.isPlaying ? 'Pause' : 'Play' }}
+    </ion-button>
+    <ion-button expand="full" (click)="saveCurrentToPlaylist()">
+  Save to Playlist
+</ion-button>
+
+  </div>
+</ion-content>

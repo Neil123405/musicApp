@@ -1,20 +1,25 @@
-<ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar>
-    <ion-title>
-      Blank
-    </ion-title>
+    <ion-title>Browse</ion-title>
+  </ion-toolbar>
+  <ion-toolbar>
+    <ion-searchbar
+      placeholder="Search for music"
+      (ionInput)="onSearch($event)">
+    </ion-searchbar>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Blank</ion-title>
-    </ion-toolbar>
-  </ion-header>
-
-  <div id="container">
-    <strong>Ready to create an app?</strong>
-    <p>Start with Ionic <a target="_blank" rel="noopener noreferrer" href="https://ionicframework.com/docs/components">UI Components</a></p>
-  </div>
+<ion-content>
+  <ion-list>
+    <ion-item *ngFor="let track of tracks" (click)="playTrack(track)">
+      <ion-thumbnail slot="start">
+        <img [src]="track.album_image || 'assets/placeholder.png'" />
+      </ion-thumbnail>
+      <ion-label>
+        <h2>{{ track.name }}</h2>
+        <p>{{ track.artist_name }}</p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
 </ion-content>

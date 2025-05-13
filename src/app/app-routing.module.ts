@@ -10,7 +10,15 @@ const routes: Routes = [
     path: '',
     redirectTo: 'home',
     pathMatch: 'full'
+  },  {
+    path: 'player',
+    loadChildren: () => import('./player/player.module').then( m => m.PlayerPageModule)
   },
+  {
+    path: 'playlists',
+    loadChildren: () => import('./playlists/playlists.module').then( m => m.PlaylistsPageModule)
+  },
+
 ];
 
 @NgModule({
