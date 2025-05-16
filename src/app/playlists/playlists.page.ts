@@ -24,4 +24,18 @@ export class PlaylistsPage implements OnInit {
   this.navCtrl.navigateForward('/player'); // 👈 go to player page
 }
 
+removeTrackFromPlaylist(track: any, playlistName: string) {
+  this.musicService.removeFromPlaylist(track.id);
+  this.musicService.savePlaylist(playlistName).then(() => {
+    // Optionally refresh playlists or update UI
+  });
+}
+
+async removeTrack(track: any, playlistName: string) {
+    await this.musicService.removeTrackFromNamedPlaylist(track.id, playlistName);
+    // Reload playlists from storage to update UI
+    this.playlists = await this.musicService.getPlaylists();
+    this.playlistNames = Object.keys(this.playlists);
+  }
+
 }

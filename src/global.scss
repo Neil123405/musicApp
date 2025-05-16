@@ -35,3 +35,80 @@
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import "@ionic/angular/css/palettes/dark.system.css";
+
+body, ion-app, ion-content {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+  background-attachment: fixed;
+}
+
+ion-toolbar {
+  --background: rgba(30, 60, 114, 0.95);
+  --color: #fff;
+  box-shadow: 0 2px 8px rgba(30, 60, 114, 0.08);
+}
+
+ion-title {
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+ion-list, ion-card {
+  background: transparent !important;
+}
+
+ion-item {
+  --background: rgba(255,255,255,0.85);
+  border-radius: 12px;
+  margin: 8px 0;
+  box-shadow: 0 2px 8px rgba(30,60,114,0.08);
+  transition: box-shadow 0.2s;
+}
+ion-item:hover, ion-item:active {
+  box-shadow: 0 4px 16px rgba(30,60,114,0.18);
+}
+
+ion-thumbnail img {
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(30,60,114,0.10);
+}
+
+ion-button {
+  --background: linear-gradient(90deg, #1e3c72 0%, #2a5298 100%);
+  --background-hover: linear-gradient(90deg, #2a5298 0%, #1e3c72 100%);
+  --border-radius: 20px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  margin-top: 10px;
+}
+
+.track-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 0;
+}
+
+.track-info img {
+  width: 160px;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(30,60,114,0.18);
+  margin-bottom: 18px;
+}
+
+.track-info h2 {
+  color: #fff;
+  margin: 8px 0 4px 0;
+  font-size: 1.5em;
+  font-weight: bold;
+  text-shadow: 0 2px 8px rgba(30,60,114,0.18);
+}
+
+.track-info p {
+  color: #e0e0e0;
+  margin-bottom: 12px;
+  font-size: 1.1em;
+  text-shadow: 0 1px 4px rgba(30,60,114,0.10);
+}

@@ -12,6 +12,7 @@ import { NavController } from '@ionic/angular';
 export class HomePage implements OnInit {
   tracks: any[] = [];
   clientId = '0f6f38b8'; // Replace this with your Jamendo API key
+  currentIndex: number = -1;
 
   constructor(
     private http: HttpClient,
@@ -39,7 +40,25 @@ export class HomePage implements OnInit {
   }
 
   playTrack(track: any) {
+    this.currentIndex = this.tracks.findIndex(t => t.id === track.id);
+    this.musicService.playlist = this.tracks;
     this.musicService.play(track);
     this.navCtrl.navigateForward('/player');
+  }
+
+  playNext() {
+    if (this.currentIndex >= 0 && this.currentIndex < this.tracks.length - 1) {
+      this.currentIndex++;
+      const nextTrack = this.tracks[this.currentIndex];
+      this.musicService.play(nextTrack);
+    }
+  }
+
+  playPrevious() {
+    if (this.currentIndex > 0) {
+      this.currentIndex--;
+      const prevTrack = this.tracks[this.currentIndex];
+      this.musicService.play(prevTrack);
+    }
   }
 }
