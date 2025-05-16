@@ -19,13 +19,14 @@ export class PlayerPage implements OnInit, OnDestroy {
     this.attachAudioEvents();
     this.updateTimes();
     this.interval = setInterval(() => this.updateTimes(), 500);
-    // Listen for track end to update play/pause button
     this.musicService.audio.addEventListener('ended', this.onAudioEnded);
 
-    // Load the saved playlist into the service's playlist array
-    const loaded = await this.musicService.getPlaylistFromStorage('MyPlaylist');
-    if (Array.isArray(loaded)) {
-      this.musicService.playlist = loaded;
+    // Only load persistent playlist if there is no session playlist
+    if (!this.musicService.playlist || this.musicService.playlist.length === 0) {
+      const loaded = await this.musicService.getPlaylistFromStorage('MyPlaylist');
+      if (Array.isArray(loaded)) {
+        this.musicService.playlist = loaded;
+      }
     }
   }
 

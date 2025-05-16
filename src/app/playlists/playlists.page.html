@@ -5,23 +5,23 @@
 </ion-header>
 
 <ion-content>
-  <ion-list *ngFor="let name of playlistNames">
-    <ion-item-divider color="light">
-      <ion-label><strong>{{ name }}</strong></ion-label>
-    </ion-item-divider>
-    
-    <ion-item *ngFor="let track of playlists[name]">
-  <ion-thumbnail slot="start">
-    <img [src]="track.album_image || 'assets/placeholder.png'" />
-  </ion-thumbnail>
-  <ion-label (click)="playTrack(track)">
-    <h2>{{ track.name }}</h2>
-    <p>{{ track.artist_name }}</p>
-  </ion-label>
-  <ion-button fill="clear" color="danger" slot="end" (click)="removeTrack(track, name)">
-    Remove
-  </ion-button>
-</ion-item>
-
-  </ion-list>
+  <ng-container *ngFor="let name of playlistNames">
+    <ion-list>
+      <ion-item-divider color="light">
+        <ion-label><strong>{{ name }}</strong></ion-label>
+      </ion-item-divider>
+      <ion-item *ngFor="let track of playlists[name]" (click)="playTrack(track, name)">
+        <ion-thumbnail slot="start">
+          <img [src]="track.album_image || 'assets/placeholder.png'" />
+        </ion-thumbnail>
+        <ion-label>
+          <h2>{{ track.name }}</h2>
+          <p>{{ track.artist_name }}</p>
+        </ion-label>
+        <ion-button fill="clear" color="danger" slot="end" (click)="removeTrack(track, name)">
+          Remove
+        </ion-button>
+      </ion-item>
+    </ion-list>
+  </ng-container>
 </ion-content>

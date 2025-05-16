@@ -21,7 +21,8 @@ export class HomePage implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.musicService.debugStorage(); // 🔍 Should log "Hello Storage"
+    // Remove or comment out this line to fix the NG02200 error:
+    // this.musicService.debugStorage(); // 🔍 Should log "Hello Storage"
     this.searchTracks(''); // load default list
   }
 
