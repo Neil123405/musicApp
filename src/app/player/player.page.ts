@@ -1,5 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { MusicService } from 'src/app/services/music.service';
+import { ToastController } from '@ionic/angular';
+import { Haptics, ImpactStyle } from '@capacitor/haptics';
 
 @Component({
   selector: 'app-player',
@@ -13,7 +15,7 @@ export class PlayerPage implements OnInit, OnDestroy {
   isSeeking = false;
   interval: any;
 
-  constructor(public musicService: MusicService) {}
+  constructor(public musicService: MusicService, private toastController: ToastController) {}
 
   async ngOnInit() {
     this.attachAudioEvents();
@@ -95,12 +97,19 @@ export class PlayerPage implements OnInit, OnDestroy {
     this.musicService.togglePlay();
   }
 
+  async showToast(msg: string) {
+    const toast = await this.toastController.create({ message: msg, duration: 1200, color: 'primary' });
+    toast.present();
+    Haptics.impact({ style: ImpactStyle.Medium });
+  }
+
   async saveCurrentToPlaylist() {
     const track = this.musicService.currentTrack;
     if (track) {
       await this.musicService.addToPlaylist(track, 'MyPlaylist');
       const playlists = await this.musicService.getPlaylists();
       console.log('✅ Saved playlist:', playlists['MyPlaylist']);
+      this.showToast(`Added to Playlist: ${track.name}`);
     }
   }
 
