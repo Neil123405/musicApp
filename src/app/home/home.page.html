@@ -15,14 +15,17 @@
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
   <ion-list>
-    <ion-item *ngFor="let track of tracks" (click)="playTrack(track)">
+    <ion-item *ngFor="let track of tracks">
       <ion-thumbnail slot="start">
         <img [src]="track.album_image || 'assets/placeholder.png'" />
       </ion-thumbnail>
-      <ion-label>
+      <ion-label (click)="playTrack(track)" style="flex:1; cursor:pointer;">
         <h2>{{ track.name }}</h2>
         <p>{{ track.artist_name }}</p>
       </ion-label>
+      <ion-button fill="clear" color="success" (click)="addToPlaylist(track, $event)">
+        <ion-icon name="add-circle"></ion-icon>
+      </ion-button>
     </ion-item>
   </ion-list>
 </ion-content>

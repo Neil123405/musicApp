@@ -86,4 +86,12 @@ export class HomePage implements OnInit {
   openAddTrackModal() {
     this.showToast('Add Track coming soon!');
   }
+
+  async addToPlaylist(track: any, event?: Event) {
+    if (event) {
+      event.stopPropagation(); // Prevent triggering playTrack
+    }
+    await this.musicService.addToPlaylist(track, 'MyPlaylist');
+    this.showToast(`Added to Playlist: ${track.name}`);
+  }
 }
