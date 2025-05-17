@@ -68,8 +68,12 @@ export class MusicService {
 
   async getPlaylists() {
     const keys = await this.storage.keys();
+    // Only include keys that are actual playlists
+    const playlistKeys = keys.filter(
+      key => key !== 'playerState' && key !== 'test_key'
+    );
     const playlists: { [key: string]: any } = {};
-    for (let key of keys) {
+    for (let key of playlistKeys) {
       playlists[key] = await this.storage.get(key);
     }
     return playlists;
