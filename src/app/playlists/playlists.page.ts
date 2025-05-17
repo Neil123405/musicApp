@@ -40,6 +40,15 @@ export class PlaylistsPage implements OnInit {
     // Reload playlists from storage to update UI
     this.playlists = await this.musicService.getPlaylists();
     this.playlistNames = Object.keys(this.playlists);
+
+    // If the currently playing playlist is the one being modified, update in-memory playlist too
+    if (
+      this.musicService.playlist &&
+      Array.isArray(this.playlists[playlistName]) &&
+      this.musicService.playlist.length === this.playlists[playlistName].length + 1 // track just removed
+    ) {
+      this.musicService.playlist = this.playlists[playlistName].slice();
+    }
   }
 
 }
