@@ -25,7 +25,7 @@ export class HomePage implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.searchTracks(''); // load default list
+    this.searchTracks(''); // Only load from API, never add extra tracks
   }
 
   async showToast(msg: string) {
@@ -38,6 +38,7 @@ export class HomePage implements OnInit {
     const encodedQuery = encodeURIComponent(query || '');
     const url = `https://api.jamendo.com/v3.0/tracks/?client_id=${this.clientId}&format=json&limit=20&namesearch=${encodedQuery}`;
     this.http.get(url).subscribe((res: any) => {
+      // Always replace the tracks array with API results only
       this.tracks = res.results;
       this.suggestions = this.tracks.map(t => t.name).slice(0, 5);
     });
