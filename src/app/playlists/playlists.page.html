@@ -18,7 +18,7 @@
           <h2>{{ track.name }}</h2>
           <p>{{ track.artist_name }}</p>
         </ion-label>
-        <ion-button fill="clear" color="danger" slot="end" (click)="removeTrack(track, name)">
+        <ion-button fill="clear" color="danger" slot="end" (click)="removeTrack(track, name); $event.stopPropagation()">
           Remove
         </ion-button>
       </ion-item>
