@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { MusicService } from 'src/app/services/music.service';
-import { NavController } from '@ionic/angular';
+import { NavController, ToastController } from '@ionic/angular';
+import { Haptics, ImpactStyle } from '@capacitor/haptics';
 
 @Component({
   selector: 'app-home',
@@ -13,31 +14,46 @@ export class HomePage implements OnInit {
   tracks: any[] = [];
   clientId = '0f6f38b8'; // Replace this with your Jamendo API key
   currentIndex: number = -1;
+  searchQuery = '';
+  suggestions: string[] = [];
 
   constructor(
     private http: HttpClient,
-    private musicService: MusicService,
-    private navCtrl: NavController
+    public musicService: MusicService,
+    private navCtrl: NavController,
+    private toastCtrl: ToastController
   ) {}
 
   ngOnInit() {
-    // Remove or comment out this line to fix the NG02200 error:
-    // this.musicService.debugStorage(); // 🔍 Should log "Hello Storage"
     this.searchTracks(''); // load default list
   }
 
+  async showToast(msg: string) {
+    const toast = await this.toastCtrl.create({ message: msg, duration: 1200, color: 'primary' });
+    toast.present();
+    Haptics.impact({ style: ImpactStyle.Medium });
+  }
+
   searchTracks(query: string) {
-    const encodedQuery = encodeURIComponent(query);
+    const encodedQuery = encodeURIComponent(query || '');
     const url = `https://api.jamendo.com/v3.0/tracks/?client_id=${this.clientId}&format=json&limit=20&namesearch=${encodedQuery}`;
-    
     this.http.get(url).subscribe((res: any) => {
       this.tracks = res.results;
+      this.suggestions = this.tracks.map(t => t.name).slice(0, 5);
     });
   }
 
   onSearch(event: any) {
     const val = event.detail.value;
-    this.searchTracks(val);
+    this.searchQuery = val;
+    this.searchTracks(val); // fetch new results as user types
+  }
+
+  doRefresh(event: any) {
+    this.searchTracks(this.searchQuery);
+    setTimeout(() => {
+      event.target.complete();
+    }, 800);
   }
 
   playTrack(track: any) {
@@ -45,6 +61,7 @@ export class HomePage implements OnInit {
     this.musicService.playlist = this.tracks;
     this.musicService.play(track);
     this.navCtrl.navigateForward('/player');
+    this.showToast(`Playing: ${track.name}`);
   }
 
   playNext() {
@@ -52,6 +69,7 @@ export class HomePage implements OnInit {
       this.currentIndex++;
       const nextTrack = this.tracks[this.currentIndex];
       this.musicService.play(nextTrack);
+      this.showToast(`Playing: ${nextTrack.name}`);
     }
   }
 
@@ -60,6 +78,11 @@ export class HomePage implements OnInit {
       this.currentIndex--;
       const prevTrack = this.tracks[this.currentIndex];
       this.musicService.play(prevTrack);
+      this.showToast(`Playing: ${prevTrack.name}`);
     }
+  }
+
+  openAddTrackModal() {
+    this.showToast('Add Track coming soon!');
   }
 }

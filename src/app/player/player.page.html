@@ -1,42 +1,72 @@
-<ion-header><ion-toolbar><ion-title>Now Playing</ion-title></ion-toolbar></ion-header>
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Now Playing</ion-title>
+  </ion-toolbar>
+</ion-header>
 <ion-content *ngIf="musicService.currentTrack">
-  <div class="track-info">
-    <img [src]="musicService.currentTrack.album_image || 'assets/placeholder.png'" />
-    <h2>{{ musicService.currentTrack.name }}</h2>
-    <p>{{ musicService.currentTrack.artist_name }}</p>
+  <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding-bottom: 80px;">
+    <div class="track-info">
+      <img [src]="musicService.currentTrack.album_image || 'assets/placeholder.png'" />
+      <h2>{{ musicService.currentTrack.name }}</h2>
+      <p>{{ musicService.currentTrack.artist_name }}</p>
 
-    <div style="width: 100%; max-width: 400px; margin: 16px auto;">
-      <ion-range
-        [min]="0"
-        [max]="duration"
-        [value]="currentTime"
-        (ionFocus)="onSliderStart()"
-        (ionBlur)="onSliderEnd($event)"
-        (ionChange)="onSliderChange($event)"
-        [disabled]="!duration"
-        pin="true"
-        color="primary"
-      ></ion-range>
-      <div style="display: flex; justify-content: space-between; font-size: 0.95em; color: #fff;">
-        <span>{{ formatTime(currentTime) }}</span>
-        <span>{{ formatTime(duration) }}</span>
+      <div style="width: 100%; max-width: 400px; margin: 16px auto;">
+        <ion-range
+          [min]="0"
+          [max]="duration"
+          [value]="currentTime"
+          (ionFocus)="onSliderStart()"
+          (ionBlur)="onSliderEnd($event)"
+          (ionChange)="onSliderChange($event)"
+          [disabled]="!duration"
+          pin="true"
+          color="primary"
+        ></ion-range>
+        <div style="display: flex; justify-content: space-between; font-size: 0.95em; color: #fff;">
+          <span>{{ formatTime(currentTime) }}</span>
+          <span>{{ formatTime(duration) }}</span>
+        </div>
       </div>
-    </div>
 
-    <div style="display: flex; justify-content: center; gap: 12px; margin: 18px 0;">
-      <ion-button fill="clear" (click)="playPrevious()" [disabled]="!musicService.playlist.length || !musicService.currentTrack">
-        <ion-icon name="play-skip-back"></ion-icon>
-      </ion-button>
-      <ion-button expand="full" (click)="togglePlayback()">
-        {{ musicService.isPlaying ? 'Pause' : 'Play' }}
-      </ion-button>
-      <ion-button fill="clear" (click)="playNext()" [disabled]="!musicService.playlist.length || !musicService.currentTrack">
-        <ion-icon name="play-skip-forward"></ion-icon>
+      <div style="display: flex; justify-content: center; gap: 12px; margin: 18px 0;">
+        <ion-button fill="clear" (click)="playPrevious()" [disabled]="!musicService.playlist.length || !musicService.currentTrack">
+          <ion-icon name="play-skip-back"></ion-icon>
+        </ion-button>
+        <ion-button expand="full" (click)="togglePlayback()">
+          {{ musicService.isPlaying ? 'Pause' : 'Play' }}
+        </ion-button>
+        <ion-button fill="clear" (click)="playNext()" [disabled]="!musicService.playlist.length || !musicService.currentTrack">
+          <ion-icon name="play-skip-forward"></ion-icon>
+        </ion-button>
+      </div>
+
+      <ion-button expand="full" (click)="saveCurrentToPlaylist()">
+        Save to Playlist
       </ion-button>
     </div>
-
-    <ion-button expand="full" (click)="saveCurrentToPlaylist()">
-      Save to Playlist
-    </ion-button>
   </div>
 </ion-content>
+
+<!-- Add at the bottom of home.page.html and player.page.html -->
+<ion-footer *ngIf="musicService.currentTrack">
+  <ion-toolbar>
+    <ion-thumbnail slot="start" style="margin-right: 12px;">
+      <img [src]="musicService.currentTrack.album_image || 'assets/placeholder.png'" />
+    </ion-thumbnail>
+    <ion-label>
+      <h3>{{ musicService.currentTrack.name }}</h3>
+      <p>{{ musicService.currentTrack.artist_name }}</p>
+    </ion-label>
+    <ion-buttons slot="end">
+      <ion-button (click)="playPrevious()">
+        <ion-icon name="play-skip-back"></ion-icon>
+      </ion-button>
+      <ion-button (click)="musicService.togglePlay()">
+        <ion-icon [name]="musicService.isPlaying ? 'pause' : 'play'"></ion-icon>
+      </ion-button>
+      <ion-button (click)="playNext()">
+        <ion-icon name="play-skip-forward"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-footer>
