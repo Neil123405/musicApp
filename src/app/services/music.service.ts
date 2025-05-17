@@ -99,4 +99,8 @@ export class MusicService {
     return data ? JSON.parse(data) : [];
   }
 
+  async clearAllStorage() {
+    await this.storage.clear();
+  }
+
 }
