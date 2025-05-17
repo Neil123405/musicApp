@@ -41,13 +41,28 @@ export class PlaylistsPage implements OnInit {
     this.playlists = await this.musicService.getPlaylists();
     this.playlistNames = Object.keys(this.playlists);
 
-    // If the currently playing playlist is the one being modified, update in-memory playlist too
+    // Update in-memory playlist if needed
     if (
       this.musicService.playlist &&
-      Array.isArray(this.playlists[playlistName]) &&
-      this.musicService.playlist.length === this.playlists[playlistName].length + 1 // track just removed
+      Array.isArray(this.playlists[playlistName])
     ) {
       this.musicService.playlist = this.playlists[playlistName].slice();
+      // If the current track was removed, handle playback
+      const stillExists = this.musicService.playlist.some(
+        t => t.id === this.musicService.currentTrack?.id
+      );
+      if (!stillExists) {
+        // Option 1: Stop playback
+        this.musicService.pause();
+        this.musicService.currentTrack = null;
+        // Option 2: Play next track if available
+        // if (this.musicService.playlist.length > 0) {
+        //   this.musicService.play(this.musicService.playlist[0]);
+        // } else {
+        //   this.musicService.pause();
+        //   this.musicService.currentTrack = null;
+        // }
+      }
     }
   }
 
