@@ -12,7 +12,7 @@ import { Haptics, ImpactStyle } from '@capacitor/haptics';
 })
 export class HomePage implements OnInit {
   tracks: any[] = [];
-  clientId = '0f6f38b8'; // Replace this with your Jamendo API key
+  clientId = '0f6f38b8';
   currentIndex: number = -1;
   searchQuery = '';
   suggestions: string[] = [];
