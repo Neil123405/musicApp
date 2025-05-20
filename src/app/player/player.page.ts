@@ -35,6 +35,7 @@ export class PlayerPage implements OnInit, OnDestroy {
     }
   }
 
+  // for ending
   ngOnDestroy() {
     if (this.interval) {
       clearInterval(this.interval);
