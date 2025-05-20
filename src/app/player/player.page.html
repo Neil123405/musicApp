@@ -29,13 +29,13 @@
       </div>
 
       <div style="display: flex; justify-content: center; gap: 12px; margin: 18px 0;">
-        <ion-button fill="clear" (click)="playPrevious()" [disabled]="!musicService.playlist.length || !musicService.currentTrack">
+        <ion-button fill="solid" (click)="playPrevious()" [disabled]="!musicService.playlist.length || !musicService.currentTrack">
           <ion-icon name="play-skip-back"></ion-icon>
         </ion-button>
         <ion-button expand="full" (click)="togglePlayback()">
           {{ musicService.isPlaying ? 'Pause' : 'Play' }}
         </ion-button>
-        <ion-button fill="clear" (click)="playNext()" [disabled]="!musicService.playlist.length || !musicService.currentTrack">
+        <ion-button fill="solid" (click)="playNext()" [disabled]="!musicService.playlist.length || !musicService.currentTrack">
           <ion-icon name="play-skip-forward"></ion-icon>
         </ion-button>
       </div>
@@ -47,7 +47,7 @@
   </div>
 </ion-content>
 
-<ion-footer *ngIf="musicService.currentTrack">
+<!-- <ion-footer *ngIf="musicService.currentTrack">
   <ion-toolbar>
     <ion-thumbnail slot="start" style="margin-right: 12px;">
       <img [src]="musicService.currentTrack.album_image || 'assets/placeholder.png'" />
@@ -68,4 +68,4 @@
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
-</ion-footer>
+</ion-footer> -->

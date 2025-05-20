@@ -33,6 +33,7 @@ export class MusicService {
     if (this.isPlaying) {
       this.pause();
     } else {
+      // simple play and pause
       this.audio.play();
       this.isPlaying = true;
     }
@@ -41,6 +42,7 @@ export class MusicService {
   async addToPlaylist(track: any, playlistName: string = 'MyPlaylist') {
     // Load the playlist from storage first
     let playlist = await this.storage.get(playlistName) || [];
+    // checks if wala pay similar sa sulod
     if (!playlist.find((t: any) => t.id === track.id)) {
       playlist.push(track);
       await this.storage.set(playlistName, playlist);

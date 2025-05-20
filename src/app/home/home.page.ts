@@ -25,26 +25,32 @@ export class HomePage implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.searchTracks(''); // Only load from API, never add extra tracks
+    this.searchTracks(''); // load diritso ang mga tracks 
   }
 
   async showToast(msg: string) {
     const toast = await this.toastCtrl.create({ message: msg, duration: 1200, color: 'primary' });
     toast.present();
+    // vibrate
     Haptics.impact({ style: ImpactStyle.Medium });
   }
 
   searchTracks(query: string) {
+    // safely encodes the query para dili mag issue sa mga special characters 
     const encodedQuery = encodeURIComponent(query || '');
+    // clientId is for authorization; returns a response in json format; restricts the limit to 20 tracks based on the provided query
     const url = `https://api.jamendo.com/v3.0/tracks/?client_id=${this.clientId}&format=json&limit=20&namesearch=${encodedQuery}`;
+    // sends GET request to the Jamendo API, and then subscribe ensures that once the response is received the function will execute
     this.http.get(url).subscribe((res: any) => {
-      // Always replace the tracks array with API results only
+      // updates the tracks with results from the API
       this.tracks = res.results;
+      // extracts the track names from the results and limits the suggestions to 5
       this.suggestions = this.tracks.map(t => t.name).slice(0, 5);
     });
   }
 
   onSearch(event: any) {
+    // value sa input
     const val = event.detail.value;
     this.searchQuery = val;
     this.searchTracks(val); // fetch new results as user types
@@ -52,45 +58,52 @@ export class HomePage implements OnInit {
 
   doRefresh(event: any) {
     this.searchTracks(this.searchQuery);
+    // delay completion sa refresh para dili mag yagaw
     setTimeout(() => {
       event.target.complete();
     }, 800);
   }
 
   playTrack(track: any) {
+    // mura siya ug loop hagntod makita ang music gi pili nimo
     this.currentIndex = this.tracks.findIndex(t => t.id === track.id);
+    // ensuring para ang playlist kay properly set siya before playback
     this.musicService.playlist = this.tracks;
+    // ee call ang service para mag play ug sound
     this.musicService.play(track);
+    // navigate ra ni siya 
     this.navCtrl.navigateForward('/player');
+    // toaste notif
     this.showToast(`Playing: ${track.name}`);
   }
 
-  playNext() {
-    if (this.currentIndex >= 0 && this.currentIndex < this.tracks.length - 1) {
-      this.currentIndex++;
-      const nextTrack = this.tracks[this.currentIndex];
-      this.musicService.play(nextTrack);
-      this.showToast(`Playing: ${nextTrack.name}`);
-    }
-  }
+  // playNext() {
+  //   if (this.currentIndex >= 0 && this.currentIndex < this.tracks.length - 1) {
+  //     this.currentIndex++;
+  //     const nextTrack = this.tracks[this.currentIndex];
+  //     this.musicService.play(nextTrack);
+  //     this.showToast(`Playing: ${nextTrack.name}`);
+  //   }
+  // }
 
-  playPrevious() {
-    if (this.currentIndex > 0) {
-      this.currentIndex--;
-      const prevTrack = this.tracks[this.currentIndex];
-      this.musicService.play(prevTrack);
-      this.showToast(`Playing: ${prevTrack.name}`);
-    }
-  }
+  // playPrevious() {
+  //   if (this.currentIndex > 0) {
+  //     this.currentIndex--;
+  //     const prevTrack = this.tracks[this.currentIndex];
+  //     this.musicService.play(prevTrack);
+  //     this.showToast(`Playing: ${prevTrack.name}`);
+  //   }
+  // }
 
-  openAddTrackModal() {
-    this.showToast('Add Track coming soon!');
-  }
+  // openAddTrackModal() {
+  //   this.showToast('Add Track coming soon!');
+  // }
 
   async addToPlaylist(track: any, event?: Event) {
     if (event) {
-      event.stopPropagation(); // Prevent triggering playTrack
+      event.stopPropagation(); // Prevent triggering playTrack kay naa man siya gi place sa lugar nga asa ee play ang music
     }
+    // calls the service function
     await this.musicService.addToPlaylist(track, 'MyPlaylist');
     this.showToast(`Added to Playlist: ${track.name}`);
   }
