@@ -155,4 +155,28 @@ export class PlayerPage implements OnInit, OnDestroy {
       this.musicService.play(playlist[idx - 1]);
     }
   }
+
+  getCurrentTrackIndex(): number {
+  if (
+    !this.musicService.playlist ||
+    !this.musicService.currentTrack
+  ) {
+    return -1;
+  }
+  // finds the index of the current track and returns it to check whether it is zero or last
+  return this.musicService.playlist.findIndex(
+    t => t.id === this.musicService.currentTrack.id
+  );
+}
+
+  isFirstTrack(): boolean {
+    return this.getCurrentTrackIndex() === 0;
+  }
+
+  isLastTrack(): boolean {
+    return (
+      this.musicService.playlist &&
+      this.getCurrentTrackIndex() === this.musicService.playlist.length - 1
+    );
+  }
 }

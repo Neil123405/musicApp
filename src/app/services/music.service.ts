@@ -7,6 +7,7 @@ export class MusicService {
   currentTrack: any = null;
   isPlaying = false;
   playlist: any[] = [];
+  currentPlaylistName: string | null = null;
 
   constructor(private storage: Storage) {
     this.initStorage();
@@ -48,7 +49,7 @@ export class MusicService {
       await this.storage.set(playlistName, playlist);
     }
     // Also update in-memory playlist if needed
-    this.playlist = playlist;
+    //this.playlist = playlist;
   }
   async updatePlaylist(playlistName: string, tracks: any[]): Promise<void> {
         // Update the playlist in storage (implement according to your storage logic)
