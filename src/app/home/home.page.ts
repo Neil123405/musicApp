@@ -69,8 +69,8 @@ export class HomePage implements OnInit {
     this.currentIndex = this.tracks.findIndex(t => t.id === track.id);
     // ensuring para ang playlist kay properly set siya before playback
     this.musicService.playlist = this.tracks;
-    
-  this.musicService.currentPlaylistName = null;
+    // By setting currentPlaylistName to null, it indicates that the user is not playing from a named playlist, but rather from the general track list.
+    this.musicService.currentPlaylistName = null;
     // ee call ang service para mag play ug sound
     this.musicService.play(track);
     // navigate ra ni siya 

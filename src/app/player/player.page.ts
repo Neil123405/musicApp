@@ -27,12 +27,12 @@ export class PlayerPage implements OnInit, OnDestroy {
 
     // Only load persistent playlist if there is no session playlist
     // persistence for music storage
-    if (!this.musicService.playlist || this.musicService.playlist.length === 0) {
-      const loaded = await this.musicService.getPlaylistFromStorage('MyPlaylist');
-      if (Array.isArray(loaded)) {
-        this.musicService.playlist = loaded;
-      }
-    }
+    // if (!this.musicService.playlist || this.musicService.playlist.length === 0) {
+    //   const loaded = await this.musicService.getPlaylistFromStorage('MyPlaylist');
+    //   if (Array.isArray(loaded)) {
+    //     this.musicService.playlist = loaded;
+    //   }
+    // }
   }
 
   // for ending

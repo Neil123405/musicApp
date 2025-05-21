@@ -45,24 +45,25 @@ export class MusicService {
     let playlist = await this.storage.get(playlistName) || [];
     // checks if wala pay similar sa sulod
     if (!playlist.find((t: any) => t.id === track.id)) {
+      // track is the new music
       playlist.push(track);
       await this.storage.set(playlistName, playlist);
     }
     // Also update in-memory playlist if needed
     //this.playlist = playlist;
   }
-  async updatePlaylist(playlistName: string, tracks: any[]): Promise<void> {
-        // Update the playlist in storage (implement according to your storage logic)
-        // Example using localStorage:
-        const playlists = JSON.parse(localStorage.getItem('playlists') || '{}');
-        playlists[playlistName] = tracks;
-        localStorage.setItem('playlists', JSON.stringify(playlists));
-        // If you use another storage mechanism, update accordingly
-    }
+  // async updatePlaylist(playlistName: string, tracks: any[]): Promise<void> {
+  //       // Update the playlist in storage
+  //       // Example using localStorage:
+  //       const playlists = JSON.parse(localStorage.getItem('playlists') || '{}');
+  //       playlists[playlistName] = tracks;
+  //       localStorage.setItem('playlists', JSON.stringify(playlists));
+  //       // If you use another storage mechanism, update accordingly
+  //   }
 
-  removeFromPlaylist(trackId: any) {
-    this.playlist = this.playlist.filter(t => t.id !== trackId);
-  }
+  // removeFromPlaylist(trackId: any) {
+  //   this.playlist = this.playlist.filter(t => t.id !== trackId);
+  // }
 
   async savePlaylist(name: string) {
     // Save the current in-memory playlist to storage
@@ -73,8 +74,9 @@ export class MusicService {
     const keys = await this.storage.keys();
     // Only include keys that are actual playlists
     const playlistKeys = keys.filter(
-      key => key !== 'playerState' && key !== 'test_key'
+      key => key !== 'test_key'
     );
+    // object key-value pair
     const playlists: { [key: string]: any } = {};
     for (let key of playlistKeys) {
       playlists[key] = await this.storage.get(key);
@@ -82,25 +84,26 @@ export class MusicService {
     return playlists;
   }
 
-  async debugStorage() {
-  await this.storage.set('test_key', 'Hello Storage');
-  const result = await this.storage.get('test_key');
-  console.log('Storage test:', result);
-}
+  // async debugStorage() {
+  //   await this.storage.set('test_key', 'Hello Storage');
+  //   const result = await this.storage.get('test_key');
+  //   console.log('Storage test:', result);
+  // }
 
   /**
    * Remove a track from a named playlist in storage and update storage.
    */
+  // filters out the track with the given ID from the playlist and updates the storage
   async removeTrackFromNamedPlaylist(trackId: any, playlistName: string) {
     const playlist = (await this.storage.get(playlistName)) || [];
     const updated = playlist.filter((t: any) => t.id !== trackId);
     await this.storage.set(playlistName, updated);
   }
 
-   async getPlaylistFromStorage(key: string): Promise<any[]> {
-    const data = localStorage.getItem(key);
-    return data ? JSON.parse(data) : [];
-  }
+  //  async getPlaylistFromStorage(key: string): Promise<any[]> {
+  //   const data = localStorage.getItem(key);
+  //   return data ? JSON.parse(data) : [];
+  // }
 
   async clearAllStorage() {
     await this.storage.clear();
