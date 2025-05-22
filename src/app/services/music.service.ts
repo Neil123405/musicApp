@@ -81,6 +81,7 @@ export class MusicService {
     // object key-value pair
     const playlists: { [key: string]: any } = {};
     for (let key of playlistKeys) {
+      // kwaon ang mga data associated sa key
       playlists[key] = await this.storage.get(key);
     }
     return playlists;
