@@ -44,7 +44,7 @@ export class PlaylistsPage implements OnInit {
     // Reload playlists from storage to update UI
     // gets the playlists which are objects, in that function cintains a this.storage that contains the new ones
     this.playlists = await this.musicService.getPlaylists();
-    // from the objects contains a key, it gets that key or name and stores it in an array
+    // from the objects contains a key, it gets that keys or name and stores it in an array
     this.playlistNames = Object.keys(this.playlists);
 
     // Update in-memory playlist if needed
