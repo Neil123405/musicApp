@@ -53,7 +53,7 @@ export class PlaylistsPage implements OnInit {
       this.musicService.playlist &&
       Array.isArray(this.playlists[playlistName])
     ) {
-      // gets a copy of the updated playlist
+      // gets a copy of the updated playlist, an array of track objects
       this.musicService.playlist = this.playlists[playlistName].slice();
       // If the current track was removed, handle playback
       // - .some(...) is an array method that checks if at least one element in the array matches the condition that is in the Music Playlist
