@@ -51,6 +51,7 @@ export class PlayerPage implements OnInit, OnDestroy {
   attachAudioEvents() {
     const audio = this.musicService.audio;
     // fires continuously as playback progresses
+    // everytime there is a time update, it will call the function and change the current time and duration for the UI
     audio.addEventListener('timeupdate', this.updateTimesBound);
     // fires when audio metadata (duration, format, title, artist) is loaded
     audio.addEventListener('loadedmetadata', this.updateTimesBound);
