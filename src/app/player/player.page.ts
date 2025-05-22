@@ -76,6 +76,7 @@ export class PlayerPage implements OnInit, OnDestroy {
   onSliderChange(event: any) {
     const value = event.detail.value;
     // gets the audio element from the service
+    // objects (including the Audio element) are assigned and passed by reference, not by value.
     const audio = this.musicService.audio;
     // Sets audio.currentTime to value, changing the playback position. both service and player audio
     audio.currentTime = value;
