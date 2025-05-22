@@ -18,6 +18,7 @@ export class MusicService {
   }
 
   play(track: any) {
+    // track array track is TRACKS
     this.audio.src = track.audio;
     this.audio.load();
     this.audio.play();

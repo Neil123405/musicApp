@@ -11,6 +11,7 @@ import { Haptics, ImpactStyle } from '@capacitor/haptics';
   standalone: false
 })
 export class HomePage implements OnInit {
+  // array of any type
   tracks: any[] = [];
   clientId = '0f6f38b8';
   currentIndex: number = -1;
@@ -40,7 +41,7 @@ export class HomePage implements OnInit {
     const encodedQuery = encodeURIComponent(query || '');
     // clientId is for authorization; returns a response in json format; restricts the limit to 20 tracks based on the provided query
     // Jamendo has approximately 600000 songs use this for randomization but warning it is slow
-    const randomOffset = Math.floor(Math.random() * 10000);
+    // const randomOffset = Math.floor(Math.random() * 10000);
     // https://developer.jamendo.com/v3.0/tracks
     // orders = duration or random for fast load
     let url = `https://api.jamendo.com/v3.0/tracks/?client_id=${this.clientId}&format=json&limit=20&orders=listens_week`;
@@ -66,18 +67,18 @@ export class HomePage implements OnInit {
 
   doRefresh(event: any) {
     this.searchTracks(this.searchQuery);
-    // delay completion sa refresh para dili mag yagaw
+    // delay completion sa refresh para dili mag yagaw or flicker
     setTimeout(() => {
       event.target.complete();
     }, 800);
   }
 
   playTrack(track: any) {
-    // mura siya ug loop hagntod makita ang music gi pili nimo
+    // mura siya ug loop hagntod makita ang music gi pili nimo BECAUSE track is tracks array variable
     this.currentIndex = this.tracks.findIndex(t => t.id === track.id);
     // ensuring para ang playlist kay properly set siya before playback
     this.musicService.playlist = this.tracks;
-    // By setting currentPlaylistName to null, it indicates that the user is not playing from a named playlist, but rather from the general track list.
+    // By setting currentPlaylistName to null, it indicates that the user is not playing from a named playlist or saved playlist, but rather from the general track list.
     this.musicService.currentPlaylistName = null;
     // ee call ang service para mag play ug sound
     this.musicService.play(track);

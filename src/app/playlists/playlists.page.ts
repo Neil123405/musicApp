@@ -26,7 +26,7 @@ export class PlaylistsPage implements OnInit {
     if (this.playlists && this.playlists[name]) {
       // the music service works with its own copy of the playlist, preventing unintended side effects from direct mutations
       this.musicService.playlist = this.playlists[name].slice();
-      this.musicService.currentPlaylistName = name; // <-- Track the source
+      this.musicService.currentPlaylistName = name; // <-- Track the source or think of it as the name of the array
     }
     this.musicService.play(track);
     this.navCtrl.navigateForward('/player');
@@ -42,26 +42,27 @@ export class PlaylistsPage implements OnInit {
   async removeTrack(track: any, playlistName: string) {
     await this.musicService.removeTrackFromNamedPlaylist(track.id, playlistName);
     // Reload playlists from storage to update UI
-    // gets the playlists which are objects
+    // gets the playlists which are objects, in that function cintains a this.storage that contains the new ones
     this.playlists = await this.musicService.getPlaylists();
     // from the objects contains a key, it gets that key or name and stores it in an array
     this.playlistNames = Object.keys(this.playlists);
 
     // Update in-memory playlist if needed
     if (
-  this.musicService.currentPlaylistName === playlistName &&
+      this.musicService.currentPlaylistName === playlistName &&
       this.musicService.playlist &&
       Array.isArray(this.playlists[playlistName])
     ) {
-      // getsa a copy of the updated playlist
+      // gets a copy of the updated playlist
       this.musicService.playlist = this.playlists[playlistName].slice();
       // If the current track was removed, handle playback
-      // - .some(...) is an array method that checks if at least one element in the array matches the condition.
+      // - .some(...) is an array method that checks if at least one element in the array matches the condition that is in the Music Playlist
       const stillExists = this.musicService.playlist.some(
         t => t.id === this.musicService.currentTrack?.id
       );
       // If they don't match, the user is listening to a different playlist or a single track, so removing a track from this playlist should not affect the current playback.
       // If they match, it means the user is playing music from that playlist, so any changes (like removing the current track) should affect playback.
+      // not stillExists or wala na
       if (!stillExists && this.musicService.currentPlaylistName === playlistName) {
         // Stop playback
         // and nullifies the current track and playlist name

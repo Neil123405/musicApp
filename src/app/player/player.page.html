@@ -11,9 +11,8 @@
       <h2>{{ musicService.currentTrack.name }}</h2>
       <p>{{ musicService.currentTrack.artist_name }}</p>
 
-      <div style="width: 100%; max-width: 400px; margin: 16px auto;">
-        <ion-range [min]="0" [max]="duration" [value]="currentTime" (ionFocus)="onSliderStart()"
-          (ionBlur)="onSliderEnd($event)" (ionChange)="onSliderChange($event)" [disabled]="!duration" pin="true"
+      <div style="width: 100%; max-width: 400px; margin: 16px auto;"> 
+        <ion-range [min]="0" [max]="duration" [value]="currentTime" (ionChange)="onSliderChange($event)" [disabled]="!duration" pin="true"
           color="primary"></ion-range>
         <div style="display: flex; justify-content: space-between; font-size: 0.95em; color: #000000;">
           <span>{{ formatTime(currentTime) }}</span>

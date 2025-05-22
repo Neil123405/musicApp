@@ -77,25 +77,25 @@ export class PlayerPage implements OnInit, OnDestroy {
     const value = event.detail.value;
     // gets the audio element from the service
     const audio = this.musicService.audio;
-    // Sets audio.currentTime to value, changing the playback position.
+    // Sets audio.currentTime to value, changing the playback position. both service and player audio
     audio.currentTime = value;
     this.currentTime = value;
-    this.isSeeking = false;
-    // Resume playback if not at the end and audio is paused
-    if (audio.paused && value < (audio.duration || 0)) {
-      audio.play();
-      this.musicService.isPlaying = true;
-    }
+    // this.isSeeking = false;
+    // Resume playback if not at the end and audio is paused after sliding it
+    // if (audio.paused && value < (audio.duration || 0)) {
+    //   audio.play();
+    //   this.musicService.isPlaying = true;
+    // }
   }
 
-  onSliderStart() {
-    this.isSeeking = true;
-  }
+  // onSliderStart() {
+  //   this.isSeeking = true;
+  // }
 
-  onSliderEnd(event: any) {
-    this.onSliderChange(event);
-    this.isSeeking = false;
-  }
+  // onSliderEnd(event: any) {
+  //   this.onSliderChange(event);
+  //   this.isSeeking = false;
+  // }
 
   formatTime(sec: number): string {
     if (!isFinite(sec)) return '0:00';
@@ -120,13 +120,13 @@ export class PlayerPage implements OnInit, OnDestroy {
   }
 
   async saveCurrentToPlaylist() {
-    // gets the current track from the service
+    // gets the current track from the service, it was set pag play sa general track
     const track = this.musicService.currentTrack;
     if (track) {
       // adds it using the service
       await this.musicService.addToPlaylist(track, 'MyPlaylist');
       // gets the playlist and put it in a variable to use
-      const playlists = await this.musicService.getPlaylists();
+      // const playlists = await this.musicService.getPlaylists();
       this.showToast(`Added to Playlist: ${track.name}`);
     }
   }
