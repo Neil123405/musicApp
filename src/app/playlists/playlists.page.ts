@@ -25,6 +25,7 @@ export class PlaylistsPage implements OnInit {
     // Set the session playlist to the current playlist for navigation
     if (this.playlists && this.playlists[name]) {
       // the music service works with its own copy of the playlist, preventing unintended side effects from direct mutations
+      // the name is the key of the object, and the value is an array of objects tracks like  your MyPlaylist
       this.musicService.playlist = this.playlists[name].slice();
       this.musicService.currentPlaylistName = name; // <-- Track the source or think of it as the name of the array
     }
