@@ -9,6 +9,7 @@ export class MusicService {
   playlist: any[] = [];
   currentPlaylistName: string | null = null;
 
+  // when a user puts music service in the constructor, it will automatically create the storage
   constructor(private storage: Storage) {
     this.initStorage();
   }
