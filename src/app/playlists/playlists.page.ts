@@ -27,7 +27,7 @@ export class PlaylistsPage implements OnInit {
       // the music service works with its own copy of the playlist, preventing unintended side effects from direct mutations
       // the name is the key of the object, and the value is an array of objects tracks like  your MyPlaylist
       this.musicService.playlist = this.playlists[name].slice();
-      this.musicService.currentPlaylistName = name; // <-- Track the source or think of it as the name of the array
+      this.musicService.currentPlaylistName = name; // <-- Track the source or think of it as the name of the key in the object, arrays and object again
     }
     this.musicService.play(track);
     this.navCtrl.navigateForward('/player');
@@ -55,6 +55,7 @@ export class PlaylistsPage implements OnInit {
       Array.isArray(this.playlists[playlistName])
     ) {
       // gets a copy of the updated playlist, an array of track objects
+      // the name is the key of the object, and the value is an array of objects tracks like  your MyPlaylist
       this.musicService.playlist = this.playlists[playlistName].slice();
       // If the current track was removed, handle playback
       // - .some(...) is an array method that checks if at least one element in the array matches the condition that is in the Music Playlist
@@ -63,7 +64,7 @@ export class PlaylistsPage implements OnInit {
       );
       // If they don't match, the user is listening to a different playlist or a single track, so removing a track from this playlist should not affect the current playback.
       // If they match, it means the user is playing music from that playlist, so any changes (like removing the current track) should affect playback.
-      // not stillExists or wala na
+      // not stillExists or wala na or NOT EXISTS THEN WALA SA PLAYLIST
       if (!stillExists && this.musicService.currentPlaylistName === playlistName) {
         // Stop playback
         // and nullifies the current track and playlist name
