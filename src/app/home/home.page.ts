@@ -15,7 +15,7 @@ export class HomePage implements OnInit {
   clientId = '0f6f38b8';
   currentIndex: number = -1;
   searchQuery = '';
-  suggestions: string[] = [];
+  // suggestions: string[] = [];
 
   constructor(
     private http: HttpClient,
@@ -39,15 +39,23 @@ export class HomePage implements OnInit {
     // safely encodes the query para dili mag issue sa mga special characters 
     const encodedQuery = encodeURIComponent(query || '');
     // clientId is for authorization; returns a response in json format; restricts the limit to 20 tracks based on the provided query
-    const url = `https://api.jamendo.com/v3.0/tracks/?client_id=${this.clientId}&format=json&limit=20&namesearch=${encodedQuery}`;
+    // Jamendo has approximately 600000 songs use this for randomization but warning it is slow
+    const randomOffset = Math.floor(Math.random() * 10000);
+    // https://developer.jamendo.com/v3.0/tracks
+    // orders = duration or random for fast load
+    let url = `https://api.jamendo.com/v3.0/tracks/?client_id=${this.clientId}&format=json&limit=20&orders=listens_week`;
+    if (encodedQuery) {
+    url += `&namesearch=${encodedQuery}`;
+    }
     // sends GET request to the Jamendo API, and then subscribe ensures that once the response is received the function will execute
     this.http.get(url).subscribe((res: any) => {
       // updates the tracks with results from the API
       this.tracks = res.results;
       // extracts the track names from the results and limits the suggestions to 5
-      this.suggestions = this.tracks.map(t => t.name).slice(0, 5);
+      // this.suggestions = this.tracks.map(t => t.name).slice(0, 5);
     });
   }
+  
 
   onSearch(event: any) {
     // value sa input
