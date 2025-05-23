@@ -67,10 +67,10 @@ export class MusicService {
   //   this.playlist = this.playlist.filter(t => t.id !== trackId);
   // }
 
-  async savePlaylist(name: string) {
-    // Save the current in-memory playlist to storage
-    await this.storage.set(name, this.playlist);
-  }
+  // async savePlaylist(name: string) {
+  //   // Save the current in-memory playlist to storage
+  //   await this.storage.set(name, this.playlist);
+  // }
 
   async getPlaylists() {
     const keys = await this.storage.keys();
