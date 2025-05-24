@@ -21,24 +21,24 @@
       </div>
 
       <div style="display: flex; justify-content: center; gap: 12px; margin: 18px 0;">
-        <ion-button fill="solid" (click)="playPrevious()"
+        <ion-button fill="clear" (click)="playPrevious()"
           [disabled]="!musicService.playlist || musicService.playlist.length <= 1 || !musicService.currentTrack || isFirstTrack()">
-          <ion-icon name="play-skip-back"></ion-icon>
+          <ion-icon name="play-skip-back-outline"></ion-icon>
         </ion-button>
-        <ion-button expand="full" (click)="togglePlayback()">
-          {{ musicService.isPlaying ? 'Pause' : 'Play' }}
+        <ion-button expand="full" (click)="togglePlayback()" shape="round">
+          <ion-icon slot="icon-only" [name]="musicService.isPlaying ? 'pause-circle-outline' : 'play-circle-outline'"></ion-icon>
         </ion-button>
-        <ion-button fill="solid" (click)="playNext()"
+        <ion-button fill="clear" (click)="playNext()"
           [disabled]="!musicService.playlist || musicService.playlist.length <= 1 || !musicService.currentTrack || isLastTrack()">
-          <ion-icon name="play-skip-forward"></ion-icon>
+          <ion-icon name="play-skip-forward-outline"></ion-icon>
         </ion-button>
       </div>
 
-      <ion-button expand="full" (click)="saveCurrentToPlaylist()">
-        Save to Playlist
+      <ion-button fill="clear" expand="full" (click)="saveCurrentToPlaylist()">
+        <ion-icon slot="icon-only" [name]="isInPlaylist ? 'heart' : 'heart-outline'"
+    [color]="isInPlaylist ? 'danger' : ''"></ion-icon>
       </ion-button>
-      <!-- Add this button where appropriate in player.page.html -->
-<ion-button (click)="downloadCurrentTrack(musicService.currentTrack)">Download</ion-button>
+<ion-button fill="clear" (click)="downloadCurrentTrack(musicService.currentTrack)" [disabled]="isCurrentTrackDownloaded()"><ion-icon slot="icon-only" name="download-outline"></ion-icon></ion-button>
     </div>
   </div>
   <div *ngIf="isDownloading" class="download-overlay">

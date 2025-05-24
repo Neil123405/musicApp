@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Storage } from '@ionic/storage-angular';
 import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({ providedIn: 'root' })
 export class MusicService {
@@ -11,7 +12,7 @@ export class MusicService {
   currentPlaylistName: string | null = null;
 
   // when a user puts music service in the constructor, it will automatically create the storage
-  constructor(private storage: Storage) {
+  constructor(private storage: Storage, private http: HttpClient) {
     this.initStorage();
   }
 
@@ -87,6 +88,10 @@ export class MusicService {
     }
     return playlists;
   }
+
+  async getUserPlaylist(playlistName: string = 'MyPlaylist'): Promise<any[]> {
+  return (await this.storage.get(playlistName)) || [];
+}
 
   // async debugStorage() {
   //   await this.storage.set('test_key', 'Hello Storage');
@@ -215,6 +220,22 @@ export class MusicService {
       console.error('Delete failed', err);
       return false;
     }
+  }
+
+  getTracksFromApi(query: string = '', clientId: string = ''): Promise<any[]> {
+    // safely encodes the query para dili mag issue sa mga special characters 
+    const encodedQuery = encodeURIComponent(query || '');
+    // clientId is for authorization; returns a response in json format; restricts the limit to 20 tracks based on the provided query
+    // Jamendo has approximately 600000 songs use this for randomization but warning it is slow
+    // const randomOffset = Math.floor(Math.random() * 10000);
+    // https://developer.jamendo.com/v3.0/tracks
+    // orders = duration or random for fast load
+    let url = `https://api.jamendo.com/v3.0/tracks/?client_id=${clientId}&format=json&limit=20&order=popularity_month`;
+    if (encodedQuery) {
+      url += `&namesearch=${encodedQuery}`;
+    }
+    // sends GET request to the Jamendo API, and then subscribe ensures that once the response is received the function will execute
+    return this.http.get<any>(url).toPromise().then(res => res.results);
   }
 
 }

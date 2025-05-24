@@ -19,17 +19,18 @@ export class HomePage implements OnInit {
   searchQuery = '';
   // suggestions: string[] = [];
   isDownloading = false;
+  isLoading = false;
+  errorMsg = '';
 
   constructor(
-    private http: HttpClient,
     public musicService: MusicService,
     private navCtrl: NavController,
     private toastCtrl: ToastController,
     private downloadState: DownloadStateService,
   ) {}
 
-  ngOnInit() {
-    this.searchTracks(''); // load diritso ang mga tracks 
+  async ngOnInit() {
+    await this.searchTracks(''); // load diritso ang mga tracks 
   }
 
   async showToast(msg: string) {
@@ -39,25 +40,14 @@ export class HomePage implements OnInit {
     Haptics.impact({ style: ImpactStyle.Medium });
   }
 
-  searchTracks(query: string) {
-    // safely encodes the query para dili mag issue sa mga special characters 
-    const encodedQuery = encodeURIComponent(query || '');
-    // clientId is for authorization; returns a response in json format; restricts the limit to 20 tracks based on the provided query
-    // Jamendo has approximately 600000 songs use this for randomization but warning it is slow
-    // const randomOffset = Math.floor(Math.random() * 10000);
-    // https://developer.jamendo.com/v3.0/tracks
-    // orders = duration or random for fast load
-    let url = `https://api.jamendo.com/v3.0/tracks/?client_id=${this.clientId}&format=json&limit=20&orders=listens_week`;
-    if (encodedQuery) {
-    url += `&namesearch=${encodedQuery}`;
+  async searchTracks(query: string) {
+    this.errorMsg = '';
+    try {
+      this.tracks = await this.musicService.getTracksFromApi(query, this.clientId);
+    } catch (err) {
+      this.errorMsg = 'Failed to load tracks. Please try again later.';
     }
-    // sends GET request to the Jamendo API, and then subscribe ensures that once the response is received the function will execute
-    this.http.get(url).subscribe((res: any) => {
-      // updates the tracks with results from the API
-      this.tracks = res.results;
-      // extracts the track names from the results and limits the suggestions to 5
-      // this.suggestions = this.tracks.map(t => t.name).slice(0, 5);
-    });
+    this.isLoading = false;
   }
   
 

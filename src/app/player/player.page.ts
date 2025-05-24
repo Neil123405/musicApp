@@ -16,6 +16,9 @@ export class PlayerPage implements OnInit, OnDestroy {
   isSeeking = false;
   interval: any;
     isDownloading = false;
+    downloadedTracks: any[] = [];
+    isInPlaylist = false;
+
 
   constructor(public musicService: MusicService, private toastController: ToastController, private downloadState: DownloadStateService,) {}
 
@@ -35,7 +38,14 @@ export class PlayerPage implements OnInit, OnDestroy {
     //     this.musicService.playlist = loaded;
     //   }
     // }
+    this.downloadedTracks = await this.musicService.getDownloadedTracks();
+    await this.updateIsInPlaylist();
   }
+  async updateIsInPlaylist() {
+    const userPlaylist = await this.musicService.getUserPlaylist();
+  this.isInPlaylist = !!userPlaylist.find(t => t.id === this.musicService.currentTrack.id);
+}
+
 
   // for ending
   ngOnDestroy() {
@@ -132,32 +142,38 @@ export class PlayerPage implements OnInit, OnDestroy {
       // gets the playlist and put it in a variable to use
       // const playlists = await this.musicService.getPlaylists();
       this.showToast(`Added to Playlist: ${track.name}`);
+      await this.updateIsInPlaylist(); // Update the heart icon state
     }
   }
 
   playNext() {
-    // kwaon ang mga playlist sa service mismo kung wala aw mu execute nang pinaka una nga if
-    const playlist = this.musicService.playlist;
-    // kwaon ang current track sa service
-    const current = this.musicService.currentTrack;
-    if (!playlist || !current) return;
-    // mura siya ug loop hagntod makita ang music gi pili nimo
-    const idx = playlist.findIndex(t => t.id === current.id);
-    // dapat dili zero or last track kung gusto ka maka next
-    if (idx >= 0 && idx < playlist.length - 1) {
-      this.musicService.play(playlist[idx + 1]);
+    const idx = this.getCurrentTrackIndex();
+  if (
+    this.musicService.playlist &&
+    idx < this.musicService.playlist.length - 1
+  ) {
+    const nextTrack = this.musicService.playlist[idx + 1];
+    if (this.musicService.currentPlaylistName === 'downloads') {
+      this.musicService.playDownloadedTrack(nextTrack);
+    } else {
+      this.musicService.play(nextTrack);
     }
+    this.musicService.currentTrack = nextTrack;
+  }
   }
 
   // just the opposite of playNext()
   playPrevious() {
-    const playlist = this.musicService.playlist;
-    const current = this.musicService.currentTrack;
-    if (!playlist || !current) return;
-    const idx = playlist.findIndex(t => t.id === current.id);
-    if (idx > 0) {
-      this.musicService.play(playlist[idx - 1]);
+    const idx = this.getCurrentTrackIndex();
+  if (this.musicService.playlist && idx > 0) {
+    const prevTrack = this.musicService.playlist[idx - 1];
+    if (this.musicService.currentPlaylistName === 'downloads') {
+      this.musicService.playDownloadedTrack(prevTrack);
+    } else {
+      this.musicService.play(prevTrack);
     }
+    this.musicService.currentTrack = prevTrack;
+  }
   }
 
   getCurrentTrackIndex(): number {
@@ -184,17 +200,30 @@ export class PlayerPage implements OnInit, OnDestroy {
     );
   }
 
-  // Add this method in PlayerPage
 async downloadCurrentTrack(track: any) {
    if (track) {
       this.downloadState.setDownloading(true);
       const filePath = await this.musicService.downloadTrack(track);
       this.downloadState.setDownloading(false);
       if (filePath) {
+        this.downloadedTracks = await this.musicService.getDownloadedTracks();
         this.showToast('Downloaded for offline use!');
       } else {
         this.showToast('Download failed.');
       }
     }
+}
+
+async isCurrentTrackInPlaylist(): Promise<boolean> {
+  if (!this.musicService.currentTrack) return false;
+  const userPlaylist = await this.musicService.getUserPlaylist();
+  return userPlaylist.some(t => t.id === this.musicService.currentTrack.id);
+}
+
+isCurrentTrackDownloaded(): boolean {
+  if (!this.musicService.currentTrack) return false;
+  return this.downloadedTracks.some(
+    t => t.id === this.musicService.currentTrack.id
+  );
 }
 }

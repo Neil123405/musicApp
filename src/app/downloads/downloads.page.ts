@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MusicService } from '../services/music.service';
 import { ToastController } from '@ionic/angular';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-downloads',
@@ -11,15 +12,20 @@ import { ToastController } from '@ionic/angular';
 export class DownloadsPage implements OnInit {
   downloadedTracks: any[] = [];
 
-  constructor(public musicService: MusicService, private toastController: ToastController) {}
+  constructor(public musicService: MusicService, private toastController: ToastController, 
+    private router: Router,) {}
 
   async ngOnInit() {
     this.downloadedTracks = await this.musicService.getDownloadedTracks();
   }
 
-  play(track: any) {
-    this.musicService.playDownloadedTrack(track);
-  }
+  async play(track: any) {
+  this.downloadedTracks = await this.musicService.getDownloadedTracks();
+  this.musicService.playlist = this.downloadedTracks.slice();
+  this.musicService.currentPlaylistName = 'downloads';
+  await this.musicService.playDownloadedTrack(track);
+  this.router.navigate(['/player']);
+}
 
     async delete(track: any) {
       console.log('Attempting to delete:', track);
@@ -43,4 +49,5 @@ export class DownloadsPage implements OnInit {
     });
     toast.present();
   }
+  
 }

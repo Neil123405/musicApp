@@ -11,6 +11,10 @@
 </ion-header>
 
 <ion-content [fullscreen]="true" class="ion-padding-bottom">
+  <div *ngIf="errorMsg" class="error-message">
+    <ion-icon name="alert-circle" color="danger"></ion-icon>
+    {{ errorMsg }}
+  </div>
   <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>

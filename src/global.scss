@@ -100,22 +100,6 @@ ion-thumbnail img {
   transition: box-shadow 0.2s;
 }
 
-ion-button {
-  --background: linear-gradient(90deg, #1e3c72 0%, #2a5298 100%);
-  --background-hover: linear-gradient(90deg, #2a5298 0%, #1e3c72 100%);
-  --border-radius: 20px;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  margin-top: 10px;
-  box-shadow: 0 2px 8px rgba(30,60,114,0.10);
-  transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
-}
-ion-button:hover, ion-button:focus, ion-button:active {
-  filter: brightness(1.08);
-  box-shadow: 0 4px 16px rgba(30,60,114,0.18);
-  transform: translateY(-1px) scale(1.03);
-}
-
 ion-searchbar {
   --background: rgba(255,255,255,0.92);
   --box-shadow: 0 2px 8px rgba(30,60,114,0.10);

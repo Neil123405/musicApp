@@ -71,3 +71,15 @@ ion-label p {
   font-size: 1.2em;
   color: #1e3c72;
 }
+
+.error-message {
+  color: #b00020;
+  text-align: center;
+  margin: 2em 0 1em 0;
+  font-weight: bold;
+  font-size: 1.1em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5em;
+}
