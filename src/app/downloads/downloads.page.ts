@@ -34,6 +34,16 @@ export class DownloadsPage implements OnInit {
       console.log('File deleted:', track.localPath);
       this.downloadedTracks = await this.musicService.getDownloadedTracks();
       this.showToast('Track deleted successfully.');
+      if (
+      this.musicService.currentTrack &&
+      this.musicService.currentTrack.id === track.id &&
+      this.musicService.currentPlaylistName === 'downloads'
+    ) {
+      this.musicService.pause();
+      this.musicService.currentTrack = null;
+      this.musicService.currentPlaylistName = null;
+      this.musicService.playlist = [];
+    }
     } else {
       console.error('Failed to delete file:', track.localPath);
       alert('Failed to delete track.');
