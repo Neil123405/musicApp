@@ -18,6 +18,10 @@ const routes: Routes = [
     path: 'playlists',
     loadChildren: () => import('./playlists/playlists.module').then( m => m.PlaylistsPageModule)
   },
+  {
+    path: 'downloads',
+    loadChildren: () => import('./downloads/downloads.module').then( m => m.DownloadsPageModule)
+  },
 
 ];
 

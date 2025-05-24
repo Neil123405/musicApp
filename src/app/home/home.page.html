@@ -26,7 +26,17 @@
       <ion-button fill="clear" color="success" (click)="addToPlaylist(track, $event)">
         <ion-icon name="add-circle"></ion-icon>
       </ion-button>
+      <ion-button fill="clear" color="primary" slot="end" (click)="downloadTrack(track, $event); $event.stopPropagation()">
+        <ion-icon name="download"></ion-icon>
+      </ion-button>
     </ion-item>
   </ion-list>
   <div style="height: 100px;"></div>
+  <!-- Add at the end of ion-content -->
+<div *ngIf="isDownloading" class="download-overlay">
+  <div class="spinner-container">
+    <ion-spinner name="crescent"></ion-spinner>
+    <div>Downloading...</div>
+  </div>
+</div>
 </ion-content>

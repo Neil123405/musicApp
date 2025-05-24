@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Storage } from '@ionic/storage-angular';
+import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 
 @Injectable({ providedIn: 'root' })
 export class MusicService {
@@ -76,7 +77,7 @@ export class MusicService {
     const keys = await this.storage.keys();
     // Only include keys that are actual playlists
     const playlistKeys = keys.filter(
-      key => key !== 'test_key'
+      key => key !== 'test_key' && key !== 'downloads'
     );
     // object key-value pair
     const playlists: { [key: string]: any } = {};
@@ -110,6 +111,110 @@ export class MusicService {
 
   async clearAllStorage() {
     await this.storage.clear();
+  }
+
+  // Save downloaded track info in storage under 'downloads'
+  async saveDownloadedTrackInfo(track: any, filePath: string) {
+    let downloads = await this.storage.get('downloads') || [];
+    // Avoid duplicates
+    if (!downloads.find((t: any) => t.id === track.id)) {
+      downloads.push({ ...track, localPath: filePath });
+      await this.storage.set('downloads', downloads);
+    }
+  }
+
+  // Download and save music file locally
+  async downloadTrack(track: any): Promise<string | null> {
+    try {
+      console.log('Downloading:', track.audio);
+    const response = await fetch(track.audio);
+    if (!response.ok) {
+      console.error('Fetch failed:', response.status, response.statusText);
+      return null;
+    }
+      const blob = await response.blob();
+      const arrayBuffer = await blob.arrayBuffer();
+      const base64 = this.arrayBufferToBase64(arrayBuffer);
+
+      const fileName = `track_${track.id}.mp3`;
+      const folder = 'music';
+    const filePath = `${folder}/${fileName}`;
+
+     try {
+      await Filesystem.mkdir({
+        path: folder,
+        directory: Directory.Data,
+        recursive: true,
+      });
+    } catch (e: any) {
+      // Ignore error if folder already exists
+      if (!e?.message?.includes('exists')) {
+        console.warn('mkdir error:', e);
+      }
+    }
+
+      await Filesystem.writeFile({
+        path: filePath,
+        data: base64,
+        directory: Directory.Data,
+      });
+
+      await this.saveDownloadedTrackInfo(track, filePath);
+      return filePath;
+    } catch (err) {
+      console.error('Download failed', err);
+      return null;
+    }
+  }
+
+  // Helper to convert ArrayBuffer to Base64
+  arrayBufferToBase64(buffer: ArrayBuffer): string {
+    let binary = '';
+    const bytes = new Uint8Array(buffer);
+    for (let i = 0; i < bytes.byteLength; i++) {
+      binary += String.fromCharCode(bytes[i]);
+    }
+    return btoa(binary);
+  }
+
+  // Get all downloaded tracks
+  async getDownloadedTracks(): Promise<any[]> {
+    return (await this.storage.get('downloads')) || [];
+  }
+
+  // Play a downloaded track
+  async playDownloadedTrack(track: any) {
+    const file = await Filesystem.readFile({
+      path: track.localPath,
+      directory: Directory.Data,
+    });
+    // Create a blob URL for the audio
+    const audioUrl = `data:audio/mp3;base64,${file.data}`;
+    this.audio.src = audioUrl;
+    this.audio.load();
+    this.audio.play();
+    this.currentTrack = track;
+    this.isPlaying = true;
+  }
+
+   async deleteDownloadedTrack(track: any): Promise<boolean> {
+    try {
+      // Remove the file from the filesystem
+      await Filesystem.deleteFile({
+        path: track.localPath,
+        directory: Directory.Data,
+      });
+
+      // Remove the track info from 'downloads' in storage
+      let downloads = await this.storage.get('downloads') || [];
+      downloads = downloads.filter((t: any) => t.id !== track.id);
+      await this.storage.set('downloads', downloads);
+
+      return true;
+    } catch (err) {
+      console.error('Delete failed', err);
+      return false;
+    }
   }
 
 }

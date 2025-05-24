@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { MusicService } from 'src/app/services/music.service';
 import { NavController, ToastController } from '@ionic/angular';
 import { Haptics, ImpactStyle } from '@capacitor/haptics';
+import { DownloadStateService } from '../services/download-state.service';
 
 @Component({
   selector: 'app-home',
@@ -17,12 +18,14 @@ export class HomePage implements OnInit {
   currentIndex: number = -1;
   searchQuery = '';
   // suggestions: string[] = [];
+  isDownloading = false;
 
   constructor(
     private http: HttpClient,
     public musicService: MusicService,
     private navCtrl: NavController,
-    private toastCtrl: ToastController
+    private toastCtrl: ToastController,
+    private downloadState: DownloadStateService,
   ) {}
 
   ngOnInit() {
@@ -117,5 +120,20 @@ export class HomePage implements OnInit {
     // calls the service function
     await this.musicService.addToPlaylist(track, 'MyPlaylist');
     this.showToast(`Added to Playlist: ${track.name}`);
+  }
+
+   async downloadTrack(track: any, event?: Event) {
+    if (event) {
+      event.stopPropagation(); // Prevent triggering playTrack kay naa man siya gi place sa lugar nga asa ee play ang music
+    }
+    this.downloadState.setDownloading(true);
+    const filePath = await this.musicService.downloadTrack(track);
+    
+  this.downloadState.setDownloading(false);
+    if (filePath) {
+      this.showToast('Downloaded for offline use!');
+    } else {
+      this.showToast('Download failed.');
+    }
   }
 }

@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { MusicService } from 'src/app/services/music.service';
 import { ToastController } from '@ionic/angular';
 import { Haptics, ImpactStyle } from '@capacitor/haptics';
+import { DownloadStateService } from '../services/download-state.service';
 
 @Component({
   selector: 'app-player',
@@ -14,8 +15,9 @@ export class PlayerPage implements OnInit, OnDestroy {
   duration = 0;
   isSeeking = false;
   interval: any;
+    isDownloading = false;
 
-  constructor(public musicService: MusicService, private toastController: ToastController) {}
+  constructor(public musicService: MusicService, private toastController: ToastController, private downloadState: DownloadStateService,) {}
 
   async ngOnInit() {
     this.attachAudioEvents();
@@ -181,4 +183,18 @@ export class PlayerPage implements OnInit, OnDestroy {
       this.getCurrentTrackIndex() === this.musicService.playlist.length - 1
     );
   }
+
+  // Add this method in PlayerPage
+async downloadCurrentTrack(track: any) {
+   if (track) {
+      this.downloadState.setDownloading(true);
+      const filePath = await this.musicService.downloadTrack(track);
+      this.downloadState.setDownloading(false);
+      if (filePath) {
+        this.showToast('Downloaded for offline use!');
+      } else {
+        this.showToast('Download failed.');
+      }
+    }
+}
 }

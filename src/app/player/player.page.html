@@ -37,6 +37,14 @@
       <ion-button expand="full" (click)="saveCurrentToPlaylist()">
         Save to Playlist
       </ion-button>
+      <!-- Add this button where appropriate in player.page.html -->
+<ion-button (click)="downloadCurrentTrack(musicService.currentTrack)">Download</ion-button>
+    </div>
+  </div>
+  <div *ngIf="isDownloading" class="download-overlay">
+    <div class="spinner-container">
+      <ion-spinner name="crescent"></ion-spinner>
+      <div>Downloading...</div>
     </div>
   </div>
 </ion-content>

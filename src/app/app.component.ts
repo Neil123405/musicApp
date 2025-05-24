@@ -1,4 +1,8 @@
 import { Component } from '@angular/core';
+import { IonMenu } from '@ionic/angular';
+import { ViewChild } from '@angular/core';
+import { DownloadStateService } from './services/download-state.service';
+// ...existing code...
 
 @Component({
   selector: 'app-root',
@@ -7,5 +11,22 @@ import { Component } from '@angular/core';
   standalone: false,
 })
 export class AppComponent {
-  constructor() {}
+
+  @ViewChild(IonMenu) menu!: IonMenu;
+
+  isDownloading = false;
+
+  constructor(private downloadState: DownloadStateService) {
+    this.downloadState.isDownloading$.subscribe(val => {
+      this.isDownloading = val;
+    });
+  }
+
+  async toggleMenu() {
+    if (await this.menu.isOpen()) {
+      this.menu.close();
+    } else {
+      this.menu.open();
+    }
+  }
 }

@@ -1,0 +1,21 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Downloads</ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content>
+  <ion-list>
+    <ion-item *ngFor="let track of downloadedTracks" (click)="play(track)">
+      <ion-thumbnail slot="start">
+        <img [src]="track.album_image || 'assets/placeholder.png'" />
+      </ion-thumbnail>
+      <ion-label>
+        <h2>{{ track.name }}</h2>
+        <p>{{ track.artist_name }}</p>
+      </ion-label>
+      <ion-button fill="clear" color="danger" slot="end" (click)="delete(track)">
+        <ion-icon name="trash"></ion-icon>
+      </ion-button>
+    </ion-item>
+  </ion-list>
+</ion-content>

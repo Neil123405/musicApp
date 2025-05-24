@@ -1,10 +1,48 @@
 <ion-app>
-  <ion-router-outlet></ion-router-outlet>
-  <ion-toolbar>
-  <ion-buttons slot="start">
-    <ion-button routerLink="/home">Home</ion-button>
-    <ion-button routerLink="/playlists">Playlists</ion-button>
-    <ion-button routerLink="/player">Now Playing</ion-button>
-  </ion-buttons>
-</ion-toolbar>
+  <ion-menu side="start" menuId="main-menu" contentId="main-content">
+    <ion-header>
+      <ion-toolbar color="primary">
+        <ion-title>Menu</ion-title>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content>
+      <ion-menu-toggle>
+        <ion-list>
+          <ion-item routerLink="/home" routerDirection="root">
+            <ion-icon name="home-outline" slot="start"></ion-icon>
+            <ion-label>Home</ion-label>
+          </ion-item>
+          <ion-item routerLink="/playlists" routerDirection="root">
+            <ion-icon name="list-outline" slot="start"></ion-icon>
+            <ion-label>Playlists</ion-label>
+          </ion-item>
+          <ion-item routerLink="/player" routerDirection="root">
+            <ion-icon name="musical-notes-outline" slot="start"></ion-icon>
+            <ion-label>Now Playing</ion-label>
+          </ion-item>
+          <ion-item routerLink="/downloads" routerDirection="root">
+            <ion-icon name="download-outline" slot="start"></ion-icon>
+            <ion-label>Downloads</ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-menu-toggle>
+    </ion-content>
+  </ion-menu>
+
+   <div id="main-content">
+    <ion-router-outlet></ion-router-outlet>
+  </div>
+
+  <ion-fab class="main-fab">
+    <ion-fab-button (click)="toggleMenu()">
+      <ion-icon name="menu"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
+  <div *ngIf="isDownloading" class="download-overlay">
+  <div class="spinner-container">
+    <ion-spinner name="crescent"></ion-spinner>
+    <div>Downloading...</div>
+  </div>
+</div>
 </ion-app>
