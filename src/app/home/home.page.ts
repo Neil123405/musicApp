@@ -122,8 +122,8 @@ export class HomePage implements OnInit {
     }
     this.downloadState.setDownloading(true);
     const filePath = await this.musicService.downloadTrack(track);
-    
-  this.downloadState.setDownloading(false);
+    // check if filepath is valid
+    this.downloadState.setDownloading(false);
     if (filePath) {
       this.showToast('Downloaded for offline use!');
     } else {

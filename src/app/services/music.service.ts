@@ -29,7 +29,12 @@ export class MusicService {
         // every app on a mobile device has its own private data directory
         directory: Directory.Data,
       });
+      // Data URLs are composed of four parts: a prefix (data:), a MIME type indicating the type of data, an optional base64 token if non-textual, and the data itself:
+      // data:[<media-type>][;base64],<data>
+      // https://developer.mozilla.org/en-US/docs/Web/URI/Reference/Schemes/data
       const audioUrl = `data:audio/mp3;base64,${file.data}`;
+      // src is a property instance of HTMLMediaElement that accepts string
+      // https://www.javascripture.com/HTMLMediaElement
       this.audio.src = audioUrl;
     } else {
       // Play streaming/online track
@@ -120,6 +125,7 @@ export class MusicService {
     try {
       if (key === 'downloads' && track.localPath) {
         // Remove the file from the filesystem
+        // https://capacitorjs.com/docs/apis/filesystem#readfile
         try {
           await Filesystem.deleteFile({
             path: track.localPath,
@@ -156,10 +162,12 @@ export class MusicService {
 
   // Save downloaded track info in storage under 'downloads'
   async saveDownloadedTrackInfo(track: any, filePath: string) {
+    // https://github.com/ionic-team/ionic-storage
     let downloads = await this.storage.get('downloads') || [];
     // Avoid duplicates
     if (!downloads.find((t: any) => t.id === track.id)) {
       downloads.push({ ...track, localPath: filePath });
+      // https://github.com/ionic-team/ionic-storage
       await this.storage.set('downloads', downloads);
     }
   }
@@ -167,14 +175,18 @@ export class MusicService {
   // Download and save music file locally
   async downloadTrack(track: any): Promise<string | null> {
     try {
+      // track.audio and things came from the Jamendo API
       console.log('Downloading:', track.audio);
       const response = await fetch(track.audio);
       if (!response.ok) {
         console.error('Fetch failed:', response.status, response.statusText);
         return null;
       }
+      // converts the link or http to blob object
       const blob = await response.blob();
+      // converts to low-level binary data to manipulate the data into a different format
       const arrayBuffer = await blob.arrayBuffer();
+      // represent binary data as text, making it easier to store or transmit, especially when saving to storage or embedding in data URLs. base64 token if non-textual, and the data itself
       const base64 = this.arrayBufferToBase64(arrayBuffer);
 
       const fileName = `track_${track.id}.mp3`;
@@ -182,6 +194,7 @@ export class MusicService {
       const filePath = `${folder}/${fileName}`;
 
       try {
+        // https://capacitorjs.com/docs/apis/filesystem#mkdiroptions
         await Filesystem.mkdir({
           path: folder,
           directory: Directory.Data,
@@ -193,7 +206,7 @@ export class MusicService {
           console.warn('mkdir error:', e);
         }
       }
-
+      // https://capacitorjs.com/docs/apis/filesystem#writefileoptions
       await Filesystem.writeFile({
         path: filePath,
         data: base64,
@@ -209,6 +222,7 @@ export class MusicService {
   }
 
   // Helper to convert ArrayBuffer to Base64
+  // just copied from the internet
   arrayBufferToBase64(buffer: ArrayBuffer): string {
     let binary = '';
     const bytes = new Uint8Array(buffer);
