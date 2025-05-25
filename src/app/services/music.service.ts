@@ -22,17 +22,19 @@ export class MusicService {
 
   async play(track: any) {
     if (track.localPath) {
-    // Play downloaded track
-    const file = await Filesystem.readFile({
-      path: track.localPath,
-      directory: Directory.Data,
-    });
-    const audioUrl = `data:audio/mp3;base64,${file.data}`;
-    this.audio.src = audioUrl;
-  } else {
-    // Play streaming/online track
-    this.audio.src = track.audio;
-  }
+      // Play downloaded track
+      const file = await Filesystem.readFile({
+        path: track.localPath,
+        // indicates that the file should be accessed from the application's data directory
+        // every app on a mobile device has its own private data directory
+        directory: Directory.Data,
+      });
+      const audioUrl = `data:audio/mp3;base64,${file.data}`;
+      this.audio.src = audioUrl;
+    } else {
+      // Play streaming/online track
+      this.audio.src = track.audio;
+    }
     // track array track is TRACKS
     this.audio.load();
     this.audio.play();
@@ -89,20 +91,20 @@ export class MusicService {
     // const keys = await this.storage.keys();
     // Only include keys that are actual playlists
     // const playlistKeys = key;
-      // key => key !== 'test_key' && key !== 'downloads'
+    // key => key !== 'test_key' && key !== 'downloads'
     // );
     // object key-value pair
     const playlists: { [key: string]: any } = {};
     // for (let key of playlistKeys) {
-      // kwaon ang mga data associated sa key
-      playlists[key] = await this.storage.get(key);
+    // kwaon ang mga data associated sa key
+    playlists[key] = await this.storage.get(key);
     // }
     return playlists;
   }
 
-//   async getUserPlaylist(key: string): Promise<any[]> {
-//   return (await this.storage.get(key)) || [];
-// }
+  //   async getUserPlaylist(key: string): Promise<any[]> {
+  //   return (await this.storage.get(key)) || [];
+  // }
 
   // async debugStorage() {
   //   await this.storage.set('test_key', 'Hello Storage');
@@ -116,31 +118,31 @@ export class MusicService {
   // filters out the track with the given ID from the playlist and updates the storage
   async removeTrackFromNamedKey(track: any, key: string) {
     try {
-    if (key === 'downloads' && track.localPath) {
-      // Remove the file from the filesystem
-      try {
-        await Filesystem.deleteFile({
-          path: track.localPath,
-          directory: Directory.Data,
-        });
-      } catch (e: any) {
-        // Ignore file not found errors
-        if (!e?.message?.includes('not found')) {
-          throw e;
+      if (key === 'downloads' && track.localPath) {
+        // Remove the file from the filesystem
+        try {
+          await Filesystem.deleteFile({
+            path: track.localPath,
+            directory: Directory.Data,
+          });
+        } catch (e: any) {
+          // Ignore file not found errors
+          if (!e?.message?.includes('not found')) {
+            throw e;
+          }
         }
       }
+
+      // Remove the track info from the specified key in storage
+      let list = await this.storage.get(key) || [];
+      list = list.filter((t: any) => t.id !== track.id);
+      await this.storage.set(key, list);
+
+      return true;
+    } catch (err) {
+      console.error('Remove failed', err);
+      return false;
     }
-
-    // Remove the track info from the specified key in storage
-    let list = await this.storage.get(key) || [];
-    list = list.filter((t: any) => t.id !== track.id);
-    await this.storage.set(key, list);
-
-    return true;
-  } catch (err) {
-    console.error('Remove failed', err);
-    return false;
-  }
   }
 
   //  async getPlaylistFromStorage(key: string): Promise<any[]> {
@@ -166,31 +168,31 @@ export class MusicService {
   async downloadTrack(track: any): Promise<string | null> {
     try {
       console.log('Downloading:', track.audio);
-    const response = await fetch(track.audio);
-    if (!response.ok) {
-      console.error('Fetch failed:', response.status, response.statusText);
-      return null;
-    }
+      const response = await fetch(track.audio);
+      if (!response.ok) {
+        console.error('Fetch failed:', response.status, response.statusText);
+        return null;
+      }
       const blob = await response.blob();
       const arrayBuffer = await blob.arrayBuffer();
       const base64 = this.arrayBufferToBase64(arrayBuffer);
 
       const fileName = `track_${track.id}.mp3`;
       const folder = 'music';
-    const filePath = `${folder}/${fileName}`;
+      const filePath = `${folder}/${fileName}`;
 
-     try {
-      await Filesystem.mkdir({
-        path: folder,
-        directory: Directory.Data,
-        recursive: true,
-      });
-    } catch (e: any) {
-      // Ignore error if folder already exists
-      if (!e?.message?.includes('exists')) {
-        console.warn('mkdir error:', e);
+      try {
+        await Filesystem.mkdir({
+          path: folder,
+          directory: Directory.Data,
+          recursive: true,
+        });
+      } catch (e: any) {
+        // Ignore error if folder already exists
+        if (!e?.message?.includes('exists')) {
+          console.warn('mkdir error:', e);
+        }
       }
-    }
 
       await Filesystem.writeFile({
         path: filePath,
@@ -222,8 +224,8 @@ export class MusicService {
   // }
 
   async getTracksFromStorage(key: string): Promise<any[]> {
-  return (await this.storage.get(key)) || [];
-}
+    return (await this.storage.get(key)) || [];
+  }
 
   // // Play a downloaded track
   // async playDownloadedTrack(track: any) {
