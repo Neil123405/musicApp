@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { IonMenu } from '@ionic/angular';
 import { ViewChild } from '@angular/core';
 import { DownloadStateService } from './services/download-state.service';
-// ...existing code...
 
 @Component({
   selector: 'app-root',

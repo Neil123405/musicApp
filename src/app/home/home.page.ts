@@ -12,12 +12,10 @@ import { DownloadStateService } from '../services/download-state.service';
   standalone: false
 })
 export class HomePage implements OnInit {
-  // array of any type
   tracks: any[] = [];
   clientId = '0f6f38b8';
   currentIndex: number = -1;
   searchQuery = '';
-  // suggestions: string[] = [];
   isDownloading = false;
   isLoading = false;
   errorMsg = '';
@@ -29,7 +27,7 @@ export class HomePage implements OnInit {
     private navCtrl: NavController,
     private toastCtrl: ToastController,
     private downloadState: DownloadStateService,
-  ) {}
+  ) { }
 
   async ngOnInit() {
     await this.refreshTrackStates();
@@ -52,7 +50,7 @@ export class HomePage implements OnInit {
     }
     this.isLoading = false;
   }
-  
+
 
   onSearch(event: any) {
     // value sa input
@@ -84,28 +82,6 @@ export class HomePage implements OnInit {
     this.showToast(`Playing: ${track.name}`);
   }
 
-  // playNext() {
-  //   if (this.currentIndex >= 0 && this.currentIndex < this.tracks.length - 1) {
-  //     this.currentIndex++;
-  //     const nextTrack = this.tracks[this.currentIndex];
-  //     this.musicService.play(nextTrack);
-  //     this.showToast(`Playing: ${nextTrack.name}`);
-  //   }
-  // }
-
-  // playPrevious() {
-  //   if (this.currentIndex > 0) {
-  //     this.currentIndex--;
-  //     const prevTrack = this.tracks[this.currentIndex];
-  //     this.musicService.play(prevTrack);
-  //     this.showToast(`Playing: ${prevTrack.name}`);
-  //   }
-  // }
-
-  // openAddTrackModal() {
-  //   this.showToast('Add Track coming soon!');
-  // }
-
   async addToPlaylist(track: any, event?: Event) {
     if (event) {
       event.stopPropagation(); // Prevent triggering playTrack kay naa man siya gi place sa lugar nga asa ee play ang music
@@ -116,29 +92,30 @@ export class HomePage implements OnInit {
     this.showToast(`Added to Playlist: ${track.name}`);
   }
 
-   async downloadTrack(track: any, event?: Event) {
+  async downloadTrack(track: any, event?: Event) {
     if (event) {
       event.stopPropagation(); // Prevent triggering playTrack kay naa man siya gi place sa lugar nga asa ee play ang music
     }
+    // this is "global"
     this.downloadState.setDownloading(true);
     const filePath = await this.musicService.downloadTrack(track);
-    // check if filepath is valid
     this.downloadState.setDownloading(false);
+    // check if filepath is valid
     if (filePath) {
       this.showToast('Downloaded for offline use!');
     } else {
       this.showToast('Download failed.');
     }
-    
-  await this.refreshTrackStates();
+
+    await this.refreshTrackStates();
   }
 
   async refreshTrackStates() {
-  // Get liked tracks
-  const playlist = await this.musicService.getTracksFromStorage('MyPlaylist');
-  this.likedTrackIds = new Set(playlist.map((t: any) => t.id));
-  // Get downloaded tracks
-  const downloads = await this.musicService.getTracksFromStorage('downloads');
-  this.downloadedTrackIds = new Set(downloads.map((t: any) => t.id));
-}
+    // Get liked tracks
+    const playlist = await this.musicService.getTracksFromStorage('MyPlaylist');
+    this.likedTrackIds = new Set(playlist.map((t: any) => t.id));
+    // Get downloaded tracks
+    const downloads = await this.musicService.getTracksFromStorage('downloads');
+    this.downloadedTrackIds = new Set(downloads.map((t: any) => t.id));
+  }
 }

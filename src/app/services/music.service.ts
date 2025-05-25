@@ -30,7 +30,7 @@ export class MusicService {
         directory: Directory.Data,
       });
       // Data URLs are composed of four parts: a prefix (data:), a MIME type indicating the type of data, an optional base64 token if non-textual, and the data itself:
-      // data:[<media-type>][;base64],<data>
+      // data:[<media-type>][;base64],<data> thhis is the syntax for data URLs
       // https://developer.mozilla.org/en-US/docs/Web/URI/Reference/Schemes/data
       const audioUrl = `data:audio/mp3;base64,${file.data}`;
       // src is a property instance of HTMLMediaElement that accepts string
@@ -71,51 +71,7 @@ export class MusicService {
       playlist.push(track);
       await this.storage.set(key, playlist);
     }
-    // Also update in-memory playlist if needed
-    //this.playlist = playlist;
   }
-  // async updatePlaylist(playlistName: string, tracks: any[]): Promise<void> {
-  //       // Update the playlist in storage
-  //       // Example using localStorage:
-  //       const playlists = JSON.parse(localStorage.getItem('playlists') || '{}');
-  //       playlists[playlistName] = tracks;
-  //       localStorage.setItem('playlists', JSON.stringify(playlists));
-  //       // If you use another storage mechanism, update accordingly
-  //   }
-
-  // removeFromPlaylist(trackId: any) {
-  //   this.playlist = this.playlist.filter(t => t.id !== trackId);
-  // }
-
-  // async savePlaylist(name: string) {
-  //   // Save the current in-memory playlist to storage
-  //   await this.storage.set(name, this.playlist);
-  // }
-
-  async getMyPlaylist(key: string) {
-    // const keys = await this.storage.keys();
-    // Only include keys that are actual playlists
-    // const playlistKeys = key;
-    // key => key !== 'test_key' && key !== 'downloads'
-    // );
-    // object key-value pair
-    const playlists: { [key: string]: any } = {};
-    // for (let key of playlistKeys) {
-    // kwaon ang mga data associated sa key
-    playlists[key] = await this.storage.get(key);
-    // }
-    return playlists;
-  }
-
-  //   async getUserPlaylist(key: string): Promise<any[]> {
-  //   return (await this.storage.get(key)) || [];
-  // }
-
-  // async debugStorage() {
-  //   await this.storage.set('test_key', 'Hello Storage');
-  //   const result = await this.storage.get('test_key');
-  //   console.log('Storage test:', result);
-  // }
 
   /**
    * Remove a track from a named playlist in storage and update storage.
@@ -150,11 +106,6 @@ export class MusicService {
       return false;
     }
   }
-
-  //  async getPlaylistFromStorage(key: string): Promise<any[]> {
-  //   const data = localStorage.getItem(key);
-  //   return data ? JSON.parse(data) : [];
-  // }
 
   async clearAllStorage() {
     await this.storage.clear();
@@ -232,58 +183,16 @@ export class MusicService {
     return btoa(binary);
   }
 
-  // Get all downloaded tracks
-  // async getTracksFromStorage('downloads'): Promise<any[]> {
-  //   return (await this.storage.get('downloads')) || [];
-  // }
-
   async getTracksFromStorage(key: string): Promise<any[]> {
     return (await this.storage.get(key)) || [];
   }
 
-  // // Play a downloaded track
-  // async playDownloadedTrack(track: any) {
-  //   const file = await Filesystem.readFile({
-  //     path: track.localPath,
-  //     directory: Directory.Data,
-  //   });
-  //   // Create a blob URL for the audio
-  //   const audioUrl = `data:audio/mp3;base64,${file.data}`;
-  //   this.audio.src = audioUrl;
-  //   this.audio.load();
-  //   this.audio.play();
-  //   this.currentTrack = track;
-  //   this.isPlaying = true;
-  // }
-
-  //  async deleteDownloadedTrack(track: any): Promise<boolean> {
-  //   try {
-  //     // Remove the file from the filesystem
-  //     await Filesystem.deleteFile({
-  //       path: track.localPath,
-  //       directory: Directory.Data,
-  //     });
-
-  //     // Remove the track info from 'downloads' in storage
-  //     let downloads = await this.storage.get('downloads') || [];
-  //     downloads = downloads.filter((t: any) => t.id !== track.id);
-  //     await this.storage.set('downloads', downloads);
-
-  //     return true;
-  //   } catch (err) {
-  //     console.error('Delete failed', err);
-  //     return false;
-  //   }
-  // }
-
   getTracksFromApi(query: string = '', clientId: string = ''): Promise<any[]> {
     // safely encodes the query para dili mag issue sa mga special characters 
     const encodedQuery = encodeURIComponent(query || '');
-    // clientId is for authorization; returns a response in json format; restricts the limit to 20 tracks based on the provided query
-    // Jamendo has approximately 600000 songs use this for randomization but warning it is slow
-    // const randomOffset = Math.floor(Math.random() * 10000);
+    // clientId is for authorization; returns a response in json format; restricts the limit to 20 tracks based on the provided query or order
+    // Jamendo has approximately 600000 songs use this for randomization warning it is slow if you have no order
     // https://developer.jamendo.com/v3.0/tracks
-    // orders = duration or random for fast load
     let url = `https://api.jamendo.com/v3.0/tracks/?client_id=${clientId}&format=json&limit=20&order=popularity_month`;
     if (encodedQuery) {
       url += `&namesearch=${encodedQuery}`;
