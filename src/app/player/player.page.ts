@@ -32,17 +32,17 @@ export class PlayerPage implements OnInit, OnDestroy {
 
     // Only load persistent playlist if there is no session playlist
     // persistence for music storage
-    // if (!this.musicService.playlist || this.musicService.playlist.length === 0) {
+    // if (!this.musicService.track || this.musicService.track.length === 0) {
     //   const loaded = await this.musicService.getPlaylistFromStorage('MyPlaylist');
     //   if (Array.isArray(loaded)) {
-    //     this.musicService.playlist = loaded;
+    //     this.musicService.track = loaded;
     //   }
     // }
-    this.downloadedTracks = await this.musicService.getDownloadedTracks();
+    this.downloadedTracks = await this.musicService.getTracksFromStorage('downloads');
     await this.updateIsInPlaylist();
   }
   async updateIsInPlaylist() {
-    const userPlaylist = await this.musicService.getUserPlaylist();
+    const userPlaylist = await this.musicService.getTracksFromStorage('MyPlaylist');
   this.isInPlaylist = !!userPlaylist.find(t => t.id === this.musicService.currentTrack.id);
 }
 
@@ -140,51 +140,53 @@ export class PlayerPage implements OnInit, OnDestroy {
       // adds it using the service
       await this.musicService.addToPlaylist(track, 'MyPlaylist');
       // gets the playlist and put it in a variable to use
-      // const playlists = await this.musicService.getPlaylists();
+      // const playlists = await this.musicService.getTracksFromStorage(key);
       this.showToast(`Added to Playlist: ${track.name}`);
       await this.updateIsInPlaylist(); // Update the heart icon state
     }
   }
 
-  playNext() {
+  async playNext() {
     const idx = this.getCurrentTrackIndex();
   if (
-    this.musicService.playlist &&
-    idx < this.musicService.playlist.length - 1
+    this.musicService.track &&
+    idx < this.musicService.track.length - 1
   ) {
-    const nextTrack = this.musicService.playlist[idx + 1];
-    if (this.musicService.currentPlaylistName === 'downloads') {
-      this.musicService.playDownloadedTrack(nextTrack);
+    const nextTrack = this.musicService.track[idx + 1];
+    if (this.musicService.currentKeyName === 'downloads') {
+      this.musicService.play(nextTrack);
     } else {
       this.musicService.play(nextTrack);
     }
     this.musicService.currentTrack = nextTrack;
+    await this.updateIsInPlaylist(); // <-- Update heart state
   }
   }
 
   // just the opposite of playNext()
-  playPrevious() {
+  async playPrevious() {
     const idx = this.getCurrentTrackIndex();
-  if (this.musicService.playlist && idx > 0) {
-    const prevTrack = this.musicService.playlist[idx - 1];
-    if (this.musicService.currentPlaylistName === 'downloads') {
-      this.musicService.playDownloadedTrack(prevTrack);
+  if (this.musicService.track && idx > 0) {
+    const prevTrack = this.musicService.track[idx - 1];
+    if (this.musicService.currentKeyName === 'downloads') {
+      this.musicService.play(prevTrack);
     } else {
       this.musicService.play(prevTrack);
     }
     this.musicService.currentTrack = prevTrack;
+    await this.updateIsInPlaylist(); // <-- Update heart state
   }
   }
 
   getCurrentTrackIndex(): number {
   if (
-    !this.musicService.playlist ||
+    !this.musicService.track ||
     !this.musicService.currentTrack
   ) {
     return -1;
   }
   // finds the index of the current track and returns it to check whether it is zero or last
-  return this.musicService.playlist.findIndex(
+  return this.musicService.track.findIndex(
     t => t.id === this.musicService.currentTrack.id
   );
 }
@@ -195,8 +197,8 @@ export class PlayerPage implements OnInit, OnDestroy {
 
   isLastTrack(): boolean {
     return (
-      this.musicService.playlist &&
-      this.getCurrentTrackIndex() === this.musicService.playlist.length - 1
+      this.musicService.track &&
+      this.getCurrentTrackIndex() === this.musicService.track.length - 1
     );
   }
 
@@ -206,7 +208,7 @@ async downloadCurrentTrack(track: any) {
       const filePath = await this.musicService.downloadTrack(track);
       this.downloadState.setDownloading(false);
       if (filePath) {
-        this.downloadedTracks = await this.musicService.getDownloadedTracks();
+        this.downloadedTracks = await this.musicService.getTracksFromStorage('downloads');
         this.showToast('Downloaded for offline use!');
       } else {
         this.showToast('Download failed.');
@@ -216,7 +218,7 @@ async downloadCurrentTrack(track: any) {
 
 async isCurrentTrackInPlaylist(): Promise<boolean> {
   if (!this.musicService.currentTrack) return false;
-  const userPlaylist = await this.musicService.getUserPlaylist();
+  const userPlaylist = await this.musicService.getTracksFromStorage('MyPlaylist');
   return userPlaylist.some(t => t.id === this.musicService.currentTrack.id);
 }
 

@@ -16,33 +16,33 @@ export class DownloadsPage implements OnInit {
     private router: Router,) {}
 
   async ngOnInit() {
-    this.downloadedTracks = await this.musicService.getDownloadedTracks();
+    this.downloadedTracks = await this.musicService.getTracksFromStorage('downloads');
   }
 
   async play(track: any) {
-  this.downloadedTracks = await this.musicService.getDownloadedTracks();
-  this.musicService.playlist = this.downloadedTracks.slice();
-  this.musicService.currentPlaylistName = 'downloads';
-  await this.musicService.playDownloadedTrack(track);
+  this.downloadedTracks = await this.musicService.getTracksFromStorage('downloads');
+  this.musicService.track = this.downloadedTracks.slice();
+  this.musicService.currentKeyName = 'downloads';
+  await this.musicService.play(track);
   this.router.navigate(['/player']);
 }
 
     async delete(track: any) {
       console.log('Attempting to delete:', track);
-    const success = await this.musicService.deleteDownloadedTrack(track);
+    const success = await this.musicService.removeTrackFromNamedKey(track, 'downloads');
     if (success) {
       console.log('File deleted:', track.localPath);
-      this.downloadedTracks = await this.musicService.getDownloadedTracks();
+      this.downloadedTracks = await this.musicService.getTracksFromStorage('downloads');
       this.showToast('Track deleted successfully.');
       if (
       this.musicService.currentTrack &&
       this.musicService.currentTrack.id === track.id &&
-      this.musicService.currentPlaylistName === 'downloads'
+      this.musicService.currentKeyName === 'downloads'
     ) {
       this.musicService.pause();
       this.musicService.currentTrack = null;
-      this.musicService.currentPlaylistName = null;
-      this.musicService.playlist = [];
+      this.musicService.currentKeyName = null;
+      this.musicService.track = [];
     }
     } else {
       console.error('Failed to delete file:', track.localPath);

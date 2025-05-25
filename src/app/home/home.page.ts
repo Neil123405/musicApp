@@ -21,6 +21,8 @@ export class HomePage implements OnInit {
   isDownloading = false;
   isLoading = false;
   errorMsg = '';
+  likedTrackIds: Set<string> = new Set();
+  downloadedTrackIds: Set<string> = new Set();
 
   constructor(
     public musicService: MusicService,
@@ -30,6 +32,7 @@ export class HomePage implements OnInit {
   ) {}
 
   async ngOnInit() {
+    await this.refreshTrackStates();
     await this.searchTracks(''); // load diritso ang mga tracks 
   }
 
@@ -70,9 +73,9 @@ export class HomePage implements OnInit {
     // mura siya ug loop hagntod makita ang music gi pili nimo BECAUSE track is tracks array variable
     this.currentIndex = this.tracks.findIndex(t => t.id === track.id);
     // ensuring para ang playlist kay properly set siya before playback
-    this.musicService.playlist = this.tracks;
+    this.musicService.track = this.tracks;
     // By setting currentPlaylistName to null, it indicates that the user is not playing from a named playlist or saved playlist, but rather from the general track list.
-    this.musicService.currentPlaylistName = null;
+    this.musicService.currentKeyName = null;
     // ee call ang service para mag play ug sound
     this.musicService.play(track);
     // navigate ra ni siya 
@@ -109,6 +112,7 @@ export class HomePage implements OnInit {
     }
     // calls the service function
     await this.musicService.addToPlaylist(track, 'MyPlaylist');
+    await this.refreshTrackStates();
     this.showToast(`Added to Playlist: ${track.name}`);
   }
 
@@ -125,5 +129,16 @@ export class HomePage implements OnInit {
     } else {
       this.showToast('Download failed.');
     }
+    
+  await this.refreshTrackStates();
   }
+
+  async refreshTrackStates() {
+  // Get liked tracks
+  const playlist = await this.musicService.getTracksFromStorage('MyPlaylist');
+  this.likedTrackIds = new Set(playlist.map((t: any) => t.id));
+  // Get downloaded tracks
+  const downloads = await this.musicService.getTracksFromStorage('downloads');
+  this.downloadedTrackIds = new Set(downloads.map((t: any) => t.id));
+}
 }

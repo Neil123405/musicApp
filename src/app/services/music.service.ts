@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Storage } from '@ionic/storage-angular';
-import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
+import { Filesystem, Directory } from '@capacitor/filesystem';
 import { HttpClient } from '@angular/common/http';
 
 @Injectable({ providedIn: 'root' })
@@ -8,8 +8,8 @@ export class MusicService {
   audio = new Audio();
   currentTrack: any = null;
   isPlaying = false;
-  playlist: any[] = [];
-  currentPlaylistName: string | null = null;
+  track: any[] = [];
+  currentKeyName: string | null = null;
 
   // when a user puts music service in the constructor, it will automatically create the storage
   constructor(private storage: Storage, private http: HttpClient) {
@@ -20,9 +20,20 @@ export class MusicService {
     await this.storage.create();
   }
 
-  play(track: any) {
-    // track array track is TRACKS
+  async play(track: any) {
+    if (track.localPath) {
+    // Play downloaded track
+    const file = await Filesystem.readFile({
+      path: track.localPath,
+      directory: Directory.Data,
+    });
+    const audioUrl = `data:audio/mp3;base64,${file.data}`;
+    this.audio.src = audioUrl;
+  } else {
+    // Play streaming/online track
     this.audio.src = track.audio;
+  }
+    // track array track is TRACKS
     this.audio.load();
     this.audio.play();
     this.currentTrack = track;
@@ -44,14 +55,14 @@ export class MusicService {
     }
   }
 
-  async addToPlaylist(track: any, playlistName: string = 'MyPlaylist') {
+  async addToPlaylist(track: any, key: string) {
     // Load the playlist from storage first
-    let playlist = await this.storage.get(playlistName) || [];
+    let playlist = await this.storage.get(key) || [];
     // checks if wala pay similar sa sulod
     if (!playlist.find((t: any) => t.id === track.id)) {
       // track is the new music
       playlist.push(track);
-      await this.storage.set(playlistName, playlist);
+      await this.storage.set(key, playlist);
     }
     // Also update in-memory playlist if needed
     //this.playlist = playlist;
@@ -74,24 +85,24 @@ export class MusicService {
   //   await this.storage.set(name, this.playlist);
   // }
 
-  async getPlaylists() {
-    const keys = await this.storage.keys();
+  async getMyPlaylist(key: string) {
+    // const keys = await this.storage.keys();
     // Only include keys that are actual playlists
-    const playlistKeys = keys.filter(
-      key => key !== 'test_key' && key !== 'downloads'
-    );
+    // const playlistKeys = key;
+      // key => key !== 'test_key' && key !== 'downloads'
+    // );
     // object key-value pair
     const playlists: { [key: string]: any } = {};
-    for (let key of playlistKeys) {
+    // for (let key of playlistKeys) {
       // kwaon ang mga data associated sa key
       playlists[key] = await this.storage.get(key);
-    }
+    // }
     return playlists;
   }
 
-  async getUserPlaylist(playlistName: string = 'MyPlaylist'): Promise<any[]> {
-  return (await this.storage.get(playlistName)) || [];
-}
+//   async getUserPlaylist(key: string): Promise<any[]> {
+//   return (await this.storage.get(key)) || [];
+// }
 
   // async debugStorage() {
   //   await this.storage.set('test_key', 'Hello Storage');
@@ -103,10 +114,33 @@ export class MusicService {
    * Remove a track from a named playlist in storage and update storage.
    */
   // filters out the track with the given ID from the playlist and updates the storage
-  async removeTrackFromNamedPlaylist(trackId: any, playlistName: string) {
-    const playlist = (await this.storage.get(playlistName)) || [];
-    const updated = playlist.filter((t: any) => t.id !== trackId);
-    await this.storage.set(playlistName, updated);
+  async removeTrackFromNamedKey(track: any, key: string) {
+    try {
+    if (key === 'downloads' && track.localPath) {
+      // Remove the file from the filesystem
+      try {
+        await Filesystem.deleteFile({
+          path: track.localPath,
+          directory: Directory.Data,
+        });
+      } catch (e: any) {
+        // Ignore file not found errors
+        if (!e?.message?.includes('not found')) {
+          throw e;
+        }
+      }
+    }
+
+    // Remove the track info from the specified key in storage
+    let list = await this.storage.get(key) || [];
+    list = list.filter((t: any) => t.id !== track.id);
+    await this.storage.set(key, list);
+
+    return true;
+  } catch (err) {
+    console.error('Remove failed', err);
+    return false;
+  }
   }
 
   //  async getPlaylistFromStorage(key: string): Promise<any[]> {
@@ -183,44 +217,48 @@ export class MusicService {
   }
 
   // Get all downloaded tracks
-  async getDownloadedTracks(): Promise<any[]> {
-    return (await this.storage.get('downloads')) || [];
-  }
+  // async getTracksFromStorage('downloads'): Promise<any[]> {
+  //   return (await this.storage.get('downloads')) || [];
+  // }
 
-  // Play a downloaded track
-  async playDownloadedTrack(track: any) {
-    const file = await Filesystem.readFile({
-      path: track.localPath,
-      directory: Directory.Data,
-    });
-    // Create a blob URL for the audio
-    const audioUrl = `data:audio/mp3;base64,${file.data}`;
-    this.audio.src = audioUrl;
-    this.audio.load();
-    this.audio.play();
-    this.currentTrack = track;
-    this.isPlaying = true;
-  }
+  async getTracksFromStorage(key: string): Promise<any[]> {
+  return (await this.storage.get(key)) || [];
+}
 
-   async deleteDownloadedTrack(track: any): Promise<boolean> {
-    try {
-      // Remove the file from the filesystem
-      await Filesystem.deleteFile({
-        path: track.localPath,
-        directory: Directory.Data,
-      });
+  // // Play a downloaded track
+  // async playDownloadedTrack(track: any) {
+  //   const file = await Filesystem.readFile({
+  //     path: track.localPath,
+  //     directory: Directory.Data,
+  //   });
+  //   // Create a blob URL for the audio
+  //   const audioUrl = `data:audio/mp3;base64,${file.data}`;
+  //   this.audio.src = audioUrl;
+  //   this.audio.load();
+  //   this.audio.play();
+  //   this.currentTrack = track;
+  //   this.isPlaying = true;
+  // }
 
-      // Remove the track info from 'downloads' in storage
-      let downloads = await this.storage.get('downloads') || [];
-      downloads = downloads.filter((t: any) => t.id !== track.id);
-      await this.storage.set('downloads', downloads);
+  //  async deleteDownloadedTrack(track: any): Promise<boolean> {
+  //   try {
+  //     // Remove the file from the filesystem
+  //     await Filesystem.deleteFile({
+  //       path: track.localPath,
+  //       directory: Directory.Data,
+  //     });
 
-      return true;
-    } catch (err) {
-      console.error('Delete failed', err);
-      return false;
-    }
-  }
+  //     // Remove the track info from 'downloads' in storage
+  //     let downloads = await this.storage.get('downloads') || [];
+  //     downloads = downloads.filter((t: any) => t.id !== track.id);
+  //     await this.storage.set('downloads', downloads);
+
+  //     return true;
+  //   } catch (err) {
+  //     console.error('Delete failed', err);
+  //     return false;
+  //   }
+  // }
 
   getTracksFromApi(query: string = '', clientId: string = ''): Promise<any[]> {
     // safely encodes the query para dili mag issue sa mga special characters 

@@ -9,25 +9,25 @@ import { NavController } from '@ionic/angular';
   standalone: false
 })
 export class PlaylistsPage implements OnInit {
-  playlists: any = {};
-  playlistNames: string[] = [];
+  array: any[] = [];
+  // keyNames: string[] = [];
 
   constructor(private musicService: MusicService, private navCtrl: NavController) {}
 
   async ngOnInit() {
     // service contains everything related to music
-    this.playlists = await this.musicService.getPlaylists();
+    this.array = await this.musicService.getTracksFromStorage('MyPlaylist');
     // extracts keys from the this.playlists object and then stores it in the array
-    this.playlistNames = Object.keys(this.playlists);
+    // this.keyNames = Object.keys(this.array);
   }
 
-  playTrack(track: any, name: string) {
+  playTrack(track: any, name: 'MyPlaylist') {
     // Set the session playlist to the current playlist for navigation
-    if (this.playlists && this.playlists[name]) {
+    if (this.array) {
       // the music service works with its own copy of the playlist, preventing unintended side effects from direct mutations
       // the name is the key of the object, and the value is an array of objects tracks like  your MyPlaylist
-      this.musicService.playlist = this.playlists[name].slice();
-      this.musicService.currentPlaylistName = name; // <-- Track the source or think of it as the name of the key in the object, arrays and object again
+      this.musicService.track = this.array.slice();
+      this.musicService.currentKeyName = name; // <-- Track the source or think of it as the name of the key in the object, arrays and object again
     }
     this.musicService.play(track);
     this.navCtrl.navigateForward('/player');
@@ -40,40 +40,40 @@ export class PlaylistsPage implements OnInit {
   //   this.musicService.savePlaylist(playlistName);
   // }
 
-  async removeTrack(track: any, playlistName: string) {
-    await this.musicService.removeTrackFromNamedPlaylist(track.id, playlistName);
+  async removeTrack(track: any, key: 'MyPlaylist') {
+    await this.musicService.removeTrackFromNamedKey(track, key);
     // Reload playlists from storage to update UI
     // gets the playlists which are objects, in that function cintains a this.storage that contains the new ones
-    this.playlists = await this.musicService.getPlaylists();
+    this.array = await this.musicService.getTracksFromStorage(key);
     // from the objects contains a key, it gets that keys or name and stores it in an array
-    this.playlistNames = Object.keys(this.playlists);
+    // this.keyNames = Object.keys(this.array);
 
     // Update in-memory playlist if needed
     if (
-      this.musicService.currentPlaylistName === playlistName &&
-      this.musicService.playlist &&
-      Array.isArray(this.playlists[playlistName])
+      /* this.musicService.currentKeyName === key && */
+      this.musicService.track /* &&
+      Array.isArray(this.array) */
     ) {
       // gets a copy of the updated playlist, an array of track objects
       // the name is the key of the object, and the value is an array of objects tracks like  your MyPlaylist
-      this.musicService.playlist = this.playlists[playlistName].slice();
+      this.musicService.track = this.array.slice();
       // If the current track was removed, handle playback
       // - .some(...) is an array method that checks if at least one element in the array matches the condition that is in the Music Playlist
-      const stillExists = this.musicService.playlist.some(
+      const stillExists = this.musicService.track.some(
         t => t.id === this.musicService.currentTrack?.id
       );
       // If they don't match, the user is listening to a different playlist or a single track, so removing a track from this playlist should not affect the current playback.
       // If they match, it means the user is playing music from that playlist, so any changes (like removing the current track) should affect playback.
       // not stillExists or wala na or NOT EXISTS THEN WALA SA PLAYLIST
-      if (!stillExists && this.musicService.currentPlaylistName === playlistName) {
+      if (!stillExists /* && this.musicService.currentKeyName === key */) {
         // Stop playback
         // and nullifies the current track and playlist name
         this.musicService.pause();
         this.musicService.currentTrack = null;
-        this.musicService.currentPlaylistName = null;
+        this.musicService.currentKeyName = null;
         // Option 2: Play next track if available
-        // if (this.musicService.playlist.length > 0) {
-        //   this.musicService.play(this.musicService.playlist[0]);
+        // if (this.musicService.track.length > 0) {
+        //   this.musicService.play(this.musicService.track[0]);
         // } else {
         //   this.musicService.pause();
         //   this.musicService.currentTrack = null;
