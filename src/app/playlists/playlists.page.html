@@ -7,9 +7,6 @@
 <ion-content>
   <ng-container>
     <ion-list>
-      <ion-item-divider color="light">
-        <ion-label><strong>MyPlaylist</strong></ion-label>
-      </ion-item-divider>
       <ion-item *ngFor="let track of array" (click)="playTrack(track, 'MyPlaylist')">
         <ion-thumbnail slot="start">
           <img [src]="track.album_image || 'assets/placeholder.png'" />

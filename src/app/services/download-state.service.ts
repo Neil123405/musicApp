@@ -8,7 +8,7 @@ export class DownloadStateService {
   isDownloading$ = this.downloadingSubject.asObservable();
 
   setDownloading(val: boolean) {
-    // When called with a boolean value, it pushes the new value to all subscribers by calling next on the subject.
+    // When called with a boolean value, it pushes the new value to all subscribers by calling next on the subject. subscriber like app.component.ts
     this.downloadingSubject.next(val);
   }
 }

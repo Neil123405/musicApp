@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { MusicService } from 'src/app/services/music.service';
 import { NavController, ToastController } from '@ionic/angular';
 import { Haptics, ImpactStyle } from '@capacitor/haptics';
@@ -15,8 +14,7 @@ export class HomePage implements OnInit {
   tracks: any[] = [];
   clientId = '0f6f38b8';
   currentIndex: number = -1;
-  searchQuery = '';
-  isDownloading = false;
+  searchQuery = '';  
   isLoading = false;
   errorMsg = '';
   likedTrackIds: Set<string> = new Set();
@@ -31,13 +29,12 @@ export class HomePage implements OnInit {
 
   async ngOnInit() {
     await this.refreshTrackStates();
-    await this.searchTracks(''); // load diritso ang mga tracks 
+    await this.searchTracks(''); 
   }
 
   async showToast(msg: string) {
     const toast = await this.toastCtrl.create({ message: msg, duration: 1200, color: 'primary' });
     toast.present();
-    // vibrate
     Haptics.impact({ style: ImpactStyle.Medium });
   }
 
@@ -53,10 +50,10 @@ export class HomePage implements OnInit {
 
 
   onSearch(event: any) {
-    // value sa input
     const val = event.detail.value;
     this.searchQuery = val;
-    this.searchTracks(val); // fetch new results as user types
+     // fetch new results as user types
+    this.searchTracks(val);
   }
 
   doRefresh(event: any) {
@@ -84,7 +81,8 @@ export class HomePage implements OnInit {
 
   async addToPlaylist(track: any, event?: Event) {
     if (event) {
-      event.stopPropagation(); // Prevent triggering playTrack kay naa man siya gi place sa lugar nga asa ee play ang music
+      // Prevent triggering playTrack kay naa man siya gi place sa lugar nga asa ee play ang music
+      event.stopPropagation(); 
     }
     // calls the service function
     await this.musicService.addToPlaylist(track, 'MyPlaylist');
@@ -94,9 +92,10 @@ export class HomePage implements OnInit {
 
   async downloadTrack(track: any, event?: Event) {
     if (event) {
-      event.stopPropagation(); // Prevent triggering playTrack kay naa man siya gi place sa lugar nga asa ee play ang music
+      // Prevent triggering playTrack kay naa man siya gi place sa lugar nga asa ee play ang music
+      event.stopPropagation(); 
     }
-    // this is "global"
+    // this is "global" and belongs to download state service which the app.componets.ts subscribes to
     this.downloadState.setDownloading(true);
     const filePath = await this.musicService.downloadTrack(track);
     this.downloadState.setDownloading(false);
@@ -106,13 +105,13 @@ export class HomePage implements OnInit {
     } else {
       this.showToast('Download failed.');
     }
-
     await this.refreshTrackStates();
   }
 
   async refreshTrackStates() {
     // Get liked tracks
     const playlist = await this.musicService.getTracksFromStorage('MyPlaylist');
+    // Set is a Javascript data structure that allows for unique values
     this.likedTrackIds = new Set(playlist.map((t: any) => t.id));
     // Get downloaded tracks
     const downloads = await this.musicService.getTracksFromStorage('downloads');

@@ -55,7 +55,7 @@ export class DownloadsPage implements OnInit {
     const toast = await this.toastController.create({
       message,
       duration: 1500,
-      color: 'primary'
+      color: 'danger'
     });
     toast.present();
   }

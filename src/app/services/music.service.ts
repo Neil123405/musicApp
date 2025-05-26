@@ -73,9 +73,6 @@ export class MusicService {
     }
   }
 
-  /**
-   * Remove a track from a named playlist in storage and update storage.
-   */
   // filters out the track with the given ID from the playlist and updates the storage
   async removeTrackFromNamedKey(track: any, key: string) {
     try {

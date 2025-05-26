@@ -37,7 +37,6 @@ ion-item {
   transition: box-shadow 0.2s;
 }
 
-ion-item:hover,
 ion-item:active {
   box-shadow: 0 4px 16px rgba(30, 60, 114, 0.18);
 }
@@ -51,26 +50,7 @@ ion-label h2 {
 ion-label p {
   color: #2a5298;
   font-size: 0.95em;
-}
-
-.download-overlay {
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  z-index: 9999;
-  background: rgba(255,255,255,0.5);
-  backdrop-filter: blur(8px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.spinner-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  font-size: 1.2em;
-  color: #1e3c72;
-}
+}  
 
 .error-message {
   color: #b00020;

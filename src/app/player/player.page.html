@@ -41,33 +41,4 @@
 <ion-button fill="clear" (click)="downloadCurrentTrack(musicService.currentTrack)" [disabled]="isCurrentTrackDownloaded()"><ion-icon slot="icon-only" name="download-outline"></ion-icon></ion-button>
     </div>
   </div>
-  <div *ngIf="isDownloading" class="download-overlay">
-    <div class="spinner-container">
-      <ion-spinner name="crescent"></ion-spinner>
-      <div>Downloading...</div>
-    </div>
-  </div>
 </ion-content>
-
-<!-- <ion-footer *ngIf="musicService.currentTrack">
-  <ion-toolbar>
-    <ion-thumbnail slot="start" style="margin-right: 12px;">
-      <img [src]="musicService.currentTrack.album_image || 'assets/placeholder.png'" />
-    </ion-thumbnail>
-    <ion-label>
-      <h3>{{ musicService.currentTrack.name }}</h3>
-      <p>{{ musicService.currentTrack.artist_name }}</p>
-    </ion-label>
-    <ion-buttons slot="end">
-      <ion-button (click)="playPrevious()">
-        <ion-icon name="play-skip-back"></ion-icon>
-      </ion-button>
-      <ion-button (click)="musicService.togglePlay()">
-        <ion-icon [name]="musicService.isPlaying ? 'pause' : 'play'"></ion-icon>
-      </ion-button>
-      <ion-button (click)="playNext()">
-        <ion-icon name="play-skip-forward"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-</ion-footer> -->

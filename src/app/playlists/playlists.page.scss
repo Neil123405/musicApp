@@ -15,10 +15,9 @@ ion-item {
   margin-bottom: 12px;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(30,60,114,0.08);
-  transition: box-shadow 0.2s;
 }
 
-ion-item:hover, ion-item:active {
+ion-item:active {
   box-shadow: 0 4px 16px rgba(30,60,114,0.18);
 }
 

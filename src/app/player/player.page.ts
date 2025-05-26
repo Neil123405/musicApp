@@ -15,7 +15,6 @@ export class PlayerPage implements OnInit, OnDestroy {
   duration = 0;
   isSeeking = false;
   interval: any;
-  isDownloading = false;
   downloadedTracks: any[] = [];
   isInPlaylist = false;
 
@@ -24,7 +23,6 @@ export class PlayerPage implements OnInit, OnDestroy {
 
   async ngOnInit() {
     this.attachAudioEvents();
-    this.updateTimes();
     // sets up a repeating timer using setInterval() to call this.updateTimes() every 500 milliseconds (0.5 seconds). 
     this.interval = setInterval(() => this.updateTimes(), 500);
     // LISTENS when the track finishes
@@ -117,18 +115,15 @@ export class PlayerPage implements OnInit, OnDestroy {
     const track = this.musicService.currentTrack;
     if (track) {
       // adds it using the service
-      await this.musicService.addToPlaylist(track, 'MyPlaylist');
-      this.showToast(`Added to Playlist: ${track.name}`);
+      await this.musicService.addToPlaylist(track, 'MyPlaylist');    
       await this.updateIsInPlaylist(); // Update the heart icon state
+      this.showToast(`Added to Playlist: ${track.name}`);
     }
   }
 
   async playNext() {
     const idx = this.getCurrentTrackIndex();
-    if (
-      this.musicService.track &&
-      idx < this.musicService.track.length - 1
-    ) {
+    if (this.musicService.track && idx < this.musicService.track.length - 1) {
       const nextTrack = this.musicService.track[idx + 1];
       if (this.musicService.currentKeyName === 'downloads') {
         this.musicService.play(nextTrack);
@@ -136,7 +131,8 @@ export class PlayerPage implements OnInit, OnDestroy {
         this.musicService.play(nextTrack);
       }
       this.musicService.currentTrack = nextTrack;
-      await this.updateIsInPlaylist(); // <-- Update heart state
+      // Update heart state
+      await this.updateIsInPlaylist(); 
     }
   }
 
@@ -151,7 +147,8 @@ export class PlayerPage implements OnInit, OnDestroy {
         this.musicService.play(prevTrack);
       }
       this.musicService.currentTrack = prevTrack;
-      await this.updateIsInPlaylist(); // <-- Update heart state
+      // <-- Update heart state
+      await this.updateIsInPlaylist();
     }
   }
 
@@ -201,7 +198,7 @@ export class PlayerPage implements OnInit, OnDestroy {
     return userPlaylist.some(t => t.id === this.musicService.currentTrack.id);
   }
 
-  // this is different because the downloaded tracks are already stored so no need to check
+  // this is different because the downloaded tracks are already stored so no need to check or wait for the service
   isCurrentTrackDownloaded(): boolean {
     if (!this.musicService.currentTrack) return false;
     return this.downloadedTracks.some(
