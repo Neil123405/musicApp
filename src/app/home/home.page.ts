@@ -111,7 +111,7 @@ export class HomePage implements OnInit {
   async refreshTrackStates() {
     // Get liked tracks
     const playlist = await this.musicService.getTracksFromStorage('MyPlaylist');
-    // Set is a Javascript data structure that allows for unique values
+    // Set is a Javascript data structure that allows for unique values and prevents duplicates like this t.id
     this.likedTrackIds = new Set(playlist.map((t: any) => t.id));
     // Get downloaded tracks
     const downloads = await this.musicService.getTracksFromStorage('downloads');

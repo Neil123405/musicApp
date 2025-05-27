@@ -3,9 +3,7 @@
     <ion-title>Browse</ion-title>
   </ion-toolbar>
   <ion-toolbar>
-    <ion-searchbar
-      placeholder="Search for music"
-      (ionInput)="onSearch($event)">
+    <ion-searchbar placeholder="Search for music" (ionInput)="onSearch($event)">
     </ion-searchbar>
   </ion-toolbar>
 </ion-header>
@@ -28,14 +26,13 @@
         <p>{{ track.artist_name }}</p>
       </ion-label>
       <ion-button fill="clear" color="success" (click)="addToPlaylist(track, $event)">
-        <ion-icon
-    slot="icon-only"
-    [name]="likedTrackIds.has(track.id) ? 'heart' : 'heart-outline'"
-    [color]="likedTrackIds.has(track.id) ? 'danger' : ''">
-  </ion-icon>
+        <ion-icon slot="icon-only" [name]="likedTrackIds.has(track.id) ? 'heart' : 'heart-outline'"
+          [color]="likedTrackIds.has(track.id) ? 'danger' : ''">
+        </ion-icon>
       </ion-button>
-      <ion-button fill="clear" color="primary" slot="end" (click)="downloadTrack(track, $event); $event.stopPropagation()" [disabled]="downloadedTrackIds.has(track.id)">
-         <ion-icon slot="icon-only" name="download-outline"></ion-icon>
+      <ion-button fill="clear" color="primary" slot="end"
+        (click)="downloadTrack(track, $event); $event.stopPropagation()" [disabled]="downloadedTrackIds.has(track.id)">
+        <ion-icon slot="icon-only" name="download-outline"></ion-icon>
       </ion-button>
     </ion-item>
   </ion-list>

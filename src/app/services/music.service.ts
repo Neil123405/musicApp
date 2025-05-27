@@ -111,6 +111,7 @@ export class MusicService {
   // Save downloaded track info in storage under 'downloads'
   async saveDownloadedTrackInfo(track: any, filePath: string) {
     // https://github.com/ionic-team/ionic-storage
+    // the get for ionic storage returns a promise, so we need to await it
     let downloads = await this.storage.get('downloads') || [];
     // Avoid duplicates
     if (!downloads.find((t: any) => t.id === track.id)) {
@@ -130,11 +131,12 @@ export class MusicService {
         console.error('Fetch failed:', response.status, response.statusText);
         return null;
       }
-      // converts the link or http to blob object
+      // converts the link or http to blob object, which is a generic representation of binary data.
       const blob = await response.blob();
-      // converts to low-level binary data to manipulate the data into a different format
+      // converts to low-level binary data to manipulate the data into a different format, which allows you to access the raw bytes of the file.
       const arrayBuffer = await blob.arrayBuffer();
-      // represent binary data as text, making it easier to store or transmit, especially when saving to storage or embedding in data URLs. base64 token if non-textual, and the data itself
+      // represent binary data as text, making it easier to store or transmit, especially when saving to storage or embedding in data URLs. 
+      // in simple terms, it converts the blob or binary data into a Base64 string, which is required for saving files in the storage and playing the audio 
       const base64 = this.arrayBufferToBase64(arrayBuffer);
 
       const fileName = `track_${track.id}.mp3`;
@@ -145,6 +147,7 @@ export class MusicService {
         // https://capacitorjs.com/docs/apis/filesystem#mkdiroptions
         await Filesystem.mkdir({
           path: folder,
+          // is a constant provided by Capacitor's Filesystem API that refers to the app's private data directory on the device. This is a secure, sandboxed folder where your app can store files (like downloaded music) that are not accessible by other apps and are deleted when the app is uninstalled.
           directory: Directory.Data,
           recursive: true,
         });
@@ -171,13 +174,17 @@ export class MusicService {
 
   // Helper to convert ArrayBuffer to Base64
   // just copied from the internet
+  // ArrayBuffer - a low-level, fixed-length binary data buffer in JavaScript
   arrayBufferToBase64(buffer: ArrayBuffer): string {
-    let binary = '';
+    let binaryString = '';
+    // allows you to access each byte as an integer.
     const bytes = new Uint8Array(buffer);
     for (let i = 0; i < bytes.byteLength; i++) {
-      binary += String.fromCharCode(bytes[i]);
+      binaryString += String.fromCharCode(bytes[i]);
     }
-    return btoa(binary);
+    // BASE 64 - The Capacitor Filesystem API (and many web/mobile storage solutions) often require file data to be in a string format when saving to storage.
+    // converts binary string into base 64 and used in contexts that require textxtual representation of binary data
+    return btoa(binaryString);
   }
 
   async getTracksFromStorage(key: string): Promise<any[]> {
@@ -185,7 +192,7 @@ export class MusicService {
   }
 
   getTracksFromApi(query: string = '', clientId: string = ''): Promise<any[]> {
-    // safely encodes the query para dili mag issue sa mga special characters 
+    // safely encodes the query para dili mag issue sa mga special characters, more importantly it is for URL
     const encodedQuery = encodeURIComponent(query || '');
     // clientId is for authorization; returns a response in json format; restricts the limit to 20 tracks based on the provided query or order
     // Jamendo has approximately 600000 songs use this for randomization warning it is slow if you have no order
@@ -195,6 +202,7 @@ export class MusicService {
       url += `&namesearch=${encodedQuery}`;
     }
     // sends GET request to the Jamendo API, and then subscribe ensures that once the response is received the function will execute
+    // .toPromise() when you only need one value (e.g., fetching API data once)
     return this.http.get<any>(url).toPromise().then(res => res.results);
   }
 
