@@ -137,6 +137,7 @@ export class MusicService {
       const arrayBuffer = await blob.arrayBuffer();
       // represent binary data as text, making it easier to store or transmit, especially when saving to storage or embedding in data URLs. 
       // in simple terms, it converts the blob or binary data into a Base64 string, which is required for saving files in the storage and playing the audio 
+      // Converting to base64 is needed here because of the process of saving the downloaded audio file using the Capacitor Filesystem API, which expects file data to be provided as a string
       const base64 = this.arrayBufferToBase64(arrayBuffer);
 
       const fileName = `track_${track.id}.mp3`;
