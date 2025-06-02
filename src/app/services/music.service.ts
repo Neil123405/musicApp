@@ -5,6 +5,7 @@ import { HttpClient } from '@angular/common/http';
 
 @Injectable({ providedIn: 'root' })
 export class MusicService {
+  // a new instance of the built-in JavaScript Audio class
   audio = new Audio();
   currentTrack: any = null;
   isPlaying = false;
