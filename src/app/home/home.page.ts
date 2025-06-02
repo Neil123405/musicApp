@@ -68,7 +68,7 @@ export class HomePage implements OnInit {
     // mura siya ug loop hagntod makita ang music gi pili nimo BECAUSE track is tracks array variable
     this.currentIndex = this.tracks.findIndex(t => t.id === track.id);
     // ensuring para ang playlist kay properly set siya before playback
-    this.musicService.track = this.tracks;
+    this.musicService.tracks = this.tracks;
     // By setting currentPlaylistName to null, it indicates that the user is not playing from a named playlist or saved playlist, but rather from the general track list.
     this.musicService.currentKeyName = null;
     // ee call ang service para mag play ug sound

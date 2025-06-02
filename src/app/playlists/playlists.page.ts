@@ -32,7 +32,7 @@ export class PlaylistsPage implements OnInit {
     if (this.array) {
       // the music service works with its own copy of the playlist, preventing unintended side effects from direct mutations
       // the name is the key of the object, and the value is an array of objects tracks like  your MyPlaylist
-      this.musicService.track = this.array.slice();
+      this.musicService.tracks = this.array.slice();
       // <-- Track the source or think of it as the name of the key in the object, arrays and object again
       this.musicService.currentKeyName = name; 
     }
@@ -46,13 +46,13 @@ export class PlaylistsPage implements OnInit {
     // gets the playlists which are objects, in that function cintains a this.storage that contains the new ones
     this.array = await this.musicService.getTracksFromStorage(key);
     // Update in-memory playlist if needed
-    if (this.musicService.track) {
+    if (this.musicService.tracks) {
       // gets a copy of the updated playlist, an array of MyPlaylist values
       // the name is the key of the object, and the value is an array of objects tracks like  your MyPlaylist
-      this.musicService.track = this.array.slice();
+      this.musicService.tracks = this.array.slice();
       // If the current track was removed, handle playback
       // - .some(...) is an array method that checks if at least one element in the array matches the condition that is in the Music Playlist
-      const stillExists = this.musicService.track.some(
+      const stillExists = this.musicService.tracks.some(
         t => t.id === this.musicService.currentTrack?.id
       );
       // If they don't match, the user is listening to a different playlist or a single track, so removing a track from this playlist should not affect the current playback.

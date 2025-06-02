@@ -8,7 +8,7 @@ export class MusicService {
   audio = new Audio();
   currentTrack: any = null;
   isPlaying = false;
-  track: any[] = [];
+  tracks: any[] = [];
   currentKeyName: string | null = null;
 
   // when a user puts music service in the constructor, it will automatically create the storage

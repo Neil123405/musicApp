@@ -123,8 +123,8 @@ export class PlayerPage implements OnInit, OnDestroy {
 
   async playNext() {
     const idx = this.getCurrentTrackIndex();
-    if (this.musicService.track && idx < this.musicService.track.length - 1) {
-      const nextTrack = this.musicService.track[idx + 1];
+    if (this.musicService.tracks && idx < this.musicService.tracks.length - 1) {
+      const nextTrack = this.musicService.tracks[idx + 1];
       if (this.musicService.currentKeyName === 'downloads') {
         this.musicService.play(nextTrack);
       } else {
@@ -139,8 +139,8 @@ export class PlayerPage implements OnInit, OnDestroy {
   // just the opposite of playNext()
   async playPrevious() {
     const idx = this.getCurrentTrackIndex();
-    if (this.musicService.track && idx > 0) {
-      const prevTrack = this.musicService.track[idx - 1];
+    if (this.musicService.tracks && idx > 0) {
+      const prevTrack = this.musicService.tracks[idx - 1];
       if (this.musicService.currentKeyName === 'downloads') {
         this.musicService.play(prevTrack);
       } else {
@@ -154,13 +154,13 @@ export class PlayerPage implements OnInit, OnDestroy {
 
   getCurrentTrackIndex(): number {
     if (
-      !this.musicService.track ||
+      !this.musicService.tracks ||
       !this.musicService.currentTrack
     ) {
       return -1;
     }
     // finds the index of the current track and returns it to check whether it is zero or last or somewhere in between
-    return this.musicService.track.findIndex(
+    return this.musicService.tracks.findIndex(
       t => t.id === this.musicService.currentTrack.id
     );
   }
@@ -173,8 +173,8 @@ export class PlayerPage implements OnInit, OnDestroy {
   // disables next
   isLastTrack(): boolean {
     return (
-      this.musicService.track &&
-      this.getCurrentTrackIndex() === this.musicService.track.length - 1
+      this.musicService.tracks &&
+      this.getCurrentTrackIndex() === this.musicService.tracks.length - 1
     );
   }
 

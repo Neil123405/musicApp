@@ -22,14 +22,14 @@
 
       <div style="display: flex; justify-content: center; gap: 12px; margin: 18px 0;">
         <ion-button fill="clear" (click)="playPrevious()"
-          [disabled]="!musicService.track || musicService.track.length <= 1 || !musicService.currentTrack || isFirstTrack()">
+          [disabled]="!musicService.tracks || musicService.tracks.length <= 1 || !musicService.currentTrack || isFirstTrack()">
           <ion-icon name="play-skip-back-outline"></ion-icon>
         </ion-button>
         <ion-button expand="full" (click)="togglePlayback()" shape="round">
           <ion-icon slot="icon-only" [name]="musicService.isPlaying ? 'pause-circle-outline' : 'play-circle-outline'"></ion-icon>
         </ion-button>
         <ion-button fill="clear" (click)="playNext()"
-          [disabled]="!musicService.track || musicService.track.length <= 1 || !musicService.currentTrack || isLastTrack()">
+          [disabled]="!musicService.tracks || musicService.tracks.length <= 1 || !musicService.currentTrack || isLastTrack()">
           <ion-icon name="play-skip-forward-outline"></ion-icon>
         </ion-button>
       </div>

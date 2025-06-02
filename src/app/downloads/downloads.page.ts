@@ -21,7 +21,7 @@ export class DownloadsPage implements OnInit {
 
   async play(track: any) {
     this.downloadedTracks = await this.musicService.getTracksFromStorage('downloads');
-    this.musicService.track = this.downloadedTracks.slice();
+    this.musicService.tracks = this.downloadedTracks.slice();
     this.musicService.currentKeyName = 'downloads';
     await this.musicService.play(track);
     this.router.navigate(['/player']);
@@ -42,7 +42,7 @@ export class DownloadsPage implements OnInit {
         this.musicService.pause();
         this.musicService.currentTrack = null;
         this.musicService.currentKeyName = null;
-        this.musicService.track = [];
+        this.musicService.tracks = [];
       }
     } else {
       console.error('Failed to delete file:', track.localPath);
