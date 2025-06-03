@@ -33,6 +33,9 @@ export class MusicService {
       // Data URLs are composed of four parts: a prefix (data:), a MIME type indicating the type of data, an optional base64 token if non-textual, and the data itself:
       // data:[<media-type>][;base64],<data> thhis is the syntax for data URLs
       // https://developer.mozilla.org/en-US/docs/Web/URI/Reference/Schemes/data
+      // https://forum.ionicframework.com/t/play-audio-from-filedirectory-with-htmlaudioelement/227465
+      // https://developer.mozilla.org/en-US/docs/Web/API/HTMLAudioElement/Audio
+      // new Audio() or new Audio(url), url is optional
       const audioUrl = `data:audio/mp3;base64,${file.data}`;
       // src is a property instance of HTMLMediaElement that accepts string
       // https://www.javascripture.com/HTMLMediaElement
