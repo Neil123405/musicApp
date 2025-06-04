@@ -22,6 +22,7 @@ export class PlayerPage implements OnInit, OnDestroy {
   constructor(public musicService: MusicService, private toastController: ToastController, private downloadState: DownloadStateService,) { }
 
   async ngOnInit() {
+    // Best practice: Keep the event listeners for a truly responsive and reliable music player experience.
     this.attachAudioEvents();
     // sets up a repeating timer using setInterval() to call this.updateTimes() every 500 milliseconds (0.5 seconds). 
     this.interval = setInterval(() => this.updateTimes(), 500);

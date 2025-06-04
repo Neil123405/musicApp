@@ -206,9 +206,10 @@ export class MusicService {
     if (encodedQuery) {
       url += `&namesearch=${encodedQuery}`;
     }
-    // HttpClient returns an Observable, which emits the response. The .toPromise() method converts the Observable to a Promise, allowing me to use .then() to extract the results directly and then automatically unsubscribe from the Observable one the data has been resolved
+    // HttpClient returns an Observable, which emits the response. The .toPromise() method converts the Observable to a Promise, allowing me to use .then() to extract the results directly and then automatically "unsubscribe" from the Observable once the data has been resolved
     // sends GET request to the Jamendo API, and then subscribe ensures that once the response is received the function will execute
     // .toPromise() when you only need one value (e.g., fetching API data once)
+    // this.http.get returns an Observable, but since this is an http, the Observable will emit only once, and .toPromise() converts it to a Promise waiting for a response and then resolves it
     return this.http.get<any>(url).toPromise().then(res => res.results);
   }
 
